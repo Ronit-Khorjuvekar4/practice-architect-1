@@ -1,0 +1,1010 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Practice Architect — Listing Page Wireframe</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root {
+    --ink: #111;
+    --line: #c9c9c9;
+    --line-strong: #1a1a1a;
+    --muted: #6b6b6b;
+    --paper: #fafafa;
+    --placeholder: #ececec;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- primitives ---------- */
+  .wf-label {
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .wf-tag {
+    position: absolute; top: 8px; left: 8px;
+    background: #fff; border: 1px solid var(--line);
+    padding: 2px 6px;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .wf-img {
+    position: relative;
+    background:
+      linear-gradient(135deg, transparent calc(50% - 0.5px), var(--line) calc(50% - 0.5px), var(--line) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      linear-gradient(45deg, transparent calc(50% - 0.5px), var(--line) calc(50% - 0.5px), var(--line) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      var(--placeholder);
+    border: 1px solid var(--line-strong);
+  }
+  .wf-img .wf-center {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #333; background: rgba(255,255,255,0.85);
+    padding: 4px 10px;
+    width: max-content; height: max-content;
+    margin: auto;
+    border: 1px solid var(--line-strong);
+  }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px dashed var(--muted);
+    padding: 3px 8px;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted);
+    background: #fff;
+  }
+  .pill::before { content: ""; width: 6px; height: 6px; background: var(--ink); border-radius: 50%; }
+
+  .container { max-width: 1360px; margin: 0 auto; padding: 0 56px; }
+
+  /* ---------- navbar ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: #fff; border-bottom: 1px solid var(--line-strong);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 76px;
+  }
+  .logo { display: inline-flex; align-items: baseline; gap: 10px; text-decoration: none; color: inherit; }
+  .logo-mark {
+    width: 28px; height: 28px;
+    border: 1.5px solid var(--ink);
+    display: inline-block;
+    transform: rotate(45deg);
+    position: relative;
+  }
+  .logo-mark::after { content: ""; position: absolute; inset: 6px; border: 1px solid var(--ink); }
+  .logo-text {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 18px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500;
+  }
+  .nav-links {
+    display: flex; gap: 40px; list-style: none; margin: 0; padding: 0; align-items: center;
+  }
+  .nav-links a {
+    text-decoration: none; color: var(--ink);
+    font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase;
+    padding-bottom: 4px; border-bottom: 1px solid transparent;
+    cursor: pointer;
+  }
+  .nav-links a.active, .nav-links a:hover { border-bottom-color: var(--ink); }
+
+  .anno {
+    border-top: 1px dashed var(--line);
+    border-bottom: 1px dashed var(--line);
+    background: #fff;
+  }
+  .anno-inner {
+    display: flex; justify-content: space-between; align-items: center;
+    height: 28px;
+  }
+
+  /* ---------- breadcrumb ---------- */
+  .crumb {
+    padding: 28px 0 0;
+  }
+  .crumb-inner {
+    display: flex; align-items: center; gap: 10px;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .crumb-inner a { color: var(--muted); text-decoration: none; }
+  .crumb-inner a:hover { color: var(--ink); }
+  .crumb-inner .sep { opacity: 0.5; }
+  .crumb-inner .now { color: var(--ink); }
+
+  /* ---------- hero / page header ---------- */
+  .hero {
+    padding: 36px 0 80px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 80px;
+    align-items: end;
+  }
+  .hero-num {
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 11px; letter-spacing: 0.2em; color: var(--muted);
+    margin-bottom: 18px;
+    display: block;
+  }
+  .hero-title {
+    font-family: "Times New Roman", Times, serif;
+    font-weight: 400;
+    font-size: 120px;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+  .hero-title .ital { font-style: italic; font-weight: 300; color: #2a2a2a; }
+  .hero-meta {
+    display: flex; flex-direction: column; gap: 18px;
+    padding-bottom: 16px;
+  }
+  .hero-counts {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    border-top: 1px solid var(--line-strong);
+    border-bottom: 1px solid var(--line-strong);
+    padding: 16px 0;
+    margin-top: 16px;
+  }
+  .hero-counts div { display: flex; flex-direction: column; gap: 4px; }
+  .hero-counts .n {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 32px;
+  }
+  .hero-summary {
+    color: #2a2a2a;
+    font-size: 14px;
+    line-height: 1.7;
+    max-width: 38ch;
+  }
+
+  /* ---------- filter / category tabs ---------- */
+  .filter {
+    border-bottom: 1px solid var(--line-strong);
+    background: #fff;
+  }
+  .filter-inner {
+    display: flex; justify-content: space-between; align-items: stretch;
+    height: 64px;
+  }
+  .filter-tabs {
+    display: flex; align-items: stretch; gap: 0;
+    list-style: none; padding: 0; margin: 0;
+    border-left: 1px solid var(--line);
+  }
+  .filter-tabs li { display: flex; }
+  .filter-tabs a {
+    display: inline-flex; align-items: center;
+    padding: 0 28px;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase;
+    border-right: 1px solid var(--line);
+    position: relative;
+    cursor: pointer;
+  }
+  .filter-tabs a .count {
+    margin-left: 10px;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .filter-tabs a.active { background: var(--ink); color: #fff; }
+  .filter-tabs a.active .count { color: #b9b9b9; }
+  .filter-right {
+    display: flex; align-items: center; gap: 22px;
+  }
+  .sort {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink);
+  }
+  .sort select {
+    border: 1px solid var(--line-strong);
+    background: #fff;
+    padding: 6px 28px 6px 10px;
+    font: inherit;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    appearance: none;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--ink) 50%),
+      linear-gradient(135deg, var(--ink) 50%, transparent 50%);
+    background-position: calc(100% - 14px) 50%, calc(100% - 9px) 50%;
+    background-size: 5px 5px;
+    background-repeat: no-repeat;
+    color: var(--ink);
+  }
+  .view-toggle {
+    display: inline-flex;
+    border: 1px solid var(--line-strong);
+  }
+  .view-toggle button {
+    width: 38px; height: 32px;
+    background: #fff; border: 0;
+    border-right: 1px solid var(--line-strong);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .view-toggle button:last-child { border-right: 0; }
+  .view-toggle button.active { background: var(--ink); color: #fff; }
+  .view-toggle svg { width: 14px; height: 14px; }
+
+  /* ---------- listing — gallery grid ---------- */
+  .listing {
+    padding: 48px 0 96px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px 28px;
+  }
+  .card {
+    background: #fff;
+    text-decoration: none;
+    color: inherit;
+    display: flex; flex-direction: column;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.05);
+    border: 1px solid var(--line);
+    transition: transform 0.35s cubic-bezier(.2,.7,.2,1), box-shadow 0.35s ease, border-color 0.2s ease;
+    overflow: hidden;
+    position: relative;
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06), 0 24px 56px rgba(0,0,0,0.12);
+    border-color: var(--line-strong);
+  }
+  .card:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
+  }
+  .card-media {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+  }
+  .card-media .wf-img {
+    position: absolute; inset: 0;
+    border: none;
+    transition: transform 0.6s cubic-bezier(.2,.7,.2,1);
+  }
+  .card:hover .card-media .wf-img { transform: scale(1.05); }
+  .card-idx {
+    position: absolute; top: 12px; right: 12px;
+    z-index: 2;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.18em;
+    background: #fff; border: 1px solid var(--line-strong);
+    padding: 4px 8px;
+    color: var(--ink);
+  }
+  .card-status {
+    position: absolute; top: 12px; left: 12px; z-index: 2;
+  }
+  .card-body {
+    padding: 22px 22px 24px;
+    display: flex; flex-direction: column; gap: 10px;
+    background: #fff;
+  }
+  .card-meta-top {
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .card-name {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 26px;
+    line-height: 1.1;
+    margin: 4px 0 0;
+    color: var(--ink);
+  }
+  .card-sub {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .card-foot {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+  .card-foot .arrow {
+    width: 30px; height: 30px;
+    border: 1px solid var(--ink);
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.3s ease;
+  }
+  .card:hover .card-foot .arrow { background: var(--ink); color: #fff; transform: translateX(2px); }
+  .card-foot .arrow svg { width: 12px; height: 12px; }
+
+  /* status badge */
+  .status {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    border: 1px solid var(--ink);
+    padding: 5px 10px;
+    background: #fff;
+    white-space: nowrap;
+  }
+  .status::before {
+    content: ""; width: 6px; height: 6px; background: var(--ink);
+  }
+  .status.completed::before { background: var(--ink); }
+  .status.ongoing::before { background: var(--ink); border-radius: 50%; }
+  .status.upcoming::before { background: #fff; border: 1px solid var(--ink); }
+  .status.concept::before { background: transparent; width: 8px; height: 8px; border: 1px solid var(--ink); transform: rotate(45deg); }
+  .status.construction { background: #111; color: #fff; border-color: #111; }
+  .status.construction::before { background: #fff; }
+
+  /* ---------- pagination ---------- */
+  .pager {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 36px 0 0;
+    border-top: 1px solid var(--line-strong);
+    margin-top: 12px;
+  }
+  .page-info {
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 11px; letter-spacing: 0.16em; color: var(--muted);
+  }
+  .page-nums { display: flex; gap: 6px; }
+  .page-nums a {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--line);
+    text-decoration: none; color: var(--ink);
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 12px;
+  }
+  .page-nums a.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .page-nav { display: flex; gap: 12px; }
+  .page-nav a {
+    display: inline-flex; align-items: center; gap: 8px;
+    text-decoration: none; color: var(--ink);
+    border: 1px solid var(--ink);
+    padding: 10px 18px;
+    font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+
+  /* ---------- footer ---------- */
+  footer { background: #0d0d0d; color: #ededed; }
+  .foot-top {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 56px;
+    padding: 80px 0 64px;
+  }
+  .foot-top .col h4 {
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #9a9a9a;
+    margin: 0 0 18px;
+    font-weight: 500;
+  }
+  .foot-top a, .foot-top p {
+    color: #ededed;
+    text-decoration: none;
+    font-size: 13px;
+    line-height: 1.8;
+    margin: 0;
+  }
+  .foot-top ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .foot-map {
+    width: 100%;
+    height: 240px;
+    border: 1px solid #2b2b2b;
+    background:
+      linear-gradient(135deg, transparent calc(50% - 0.5px), #2b2b2b calc(50% - 0.5px), #2b2b2b calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      linear-gradient(45deg, transparent calc(50% - 0.5px), #2b2b2b calc(50% - 0.5px), #2b2b2b calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      repeating-linear-gradient(0deg, #141414 0 24px, #181818 24px 48px),
+      #141414;
+    position: relative;
+    margin-bottom: 18px;
+  }
+  .foot-map .pin {
+    position: absolute; top: 48%; left: 42%;
+    width: 14px; height: 14px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.15);
+  }
+  .foot-map .pin::after {
+    content: ""; position: absolute; left: 50%; top: 100%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #fff;
+  }
+  .foot-map-tag {
+    position: absolute; top: 12px; left: 12px;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #9a9a9a;
+    border: 1px solid #2b2b2b; padding: 3px 7px;
+    background: #0d0d0d;
+  }
+  .foot-logo {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 18px;
+  }
+  .foot-logo .logo-mark { border-color: #fff; }
+  .foot-logo .logo-mark::after { border-color: #fff; }
+  .foot-logo .logo-text { color: #fff; }
+  .foot-bottom {
+    border-top: 1px solid #1f1f1f;
+    padding: 22px 0;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: #7d7d7d;
+    letter-spacing: 0.08em;
+  }
+  .foot-bottom a { color: #7d7d7d; text-decoration: none; }
+  .foot-bottom .socials { display: flex; gap: 22px; }
+
+  @media (max-width: 1100px) {
+    .container { padding: 0 24px; }
+    .hero-title { font-size: 72px; }
+    .hero-inner { grid-template-columns: 1fr; gap: 32px; }
+    .grid { grid-template-columns: repeat(2, 1fr); gap: 28px 20px; }
+    .foot-top { grid-template-columns: 1fr 1fr; }
+    .filter-inner { flex-direction: column; height: auto; }
+    .filter-tabs { width: 100%; overflow-x: auto; }
+    .filter-right { padding: 12px 0; }
+  }
+  @media (max-width: 640px) {
+    .container { padding: 0 18px; }
+    .hero-title { font-size: 52px; }
+    .grid { grid-template-columns: 1fr; gap: 24px; }
+    .card-name { font-size: 22px; }
+    .filter-tabs a { padding: 0 16px; font-size: 11px; }
+    .foot-top { grid-template-columns: 1fr; gap: 32px; }
+    .foot-bottom { flex-direction: column; gap: 10px; text-align: center; }
+  }
+
+  /* ---------- tweak-driven section hides ---------- */
+  html.tw-hide-nav        header.nav,
+  html.tw-hide-nav        .anno,
+  html.tw-hide-breadcrumb .crumb,
+  html.tw-hide-hero       .hero,
+  html.tw-hide-filter     .filter,
+  html.tw-hide-listing    .listing,
+  html.tw-hide-pagination .pager,
+  html.tw-hide-footer     footer { display: none !important; }
+</style>
+</head>
+<body>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" data-screen-label="01 Navbar">
+    <div class="container nav-inner">
+      <a href="#" class="logo" aria-label="Practice Architect">
+        <span class="logo-mark" aria-hidden="true"></span>
+        <span class="logo-text">Practice Architect</span>
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <li><a data-cat="home">Home</a></li>
+          <li><a data-cat="architecture" class="active">Architecture</a></li>
+          <li><a data-cat="interior">Interior</a></li>
+          <li><a data-cat="planning">Planning</a></li>
+          <li><a data-cat="landscape">Landscape</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="anno">
+    <div class="container anno-inner">
+      <span class="wf-label">Section 01 — Sticky Navbar · Consistent w/ Homepage</span>
+      <span class="wf-label">Wireframe · Practice Architect · Listing v1</span>
+    </div>
+  </div>
+
+  <!-- ============ BREADCRUMB ============ -->
+  <div class="crumb">
+    <div class="container crumb-inner">
+      <a href="#">Practice</a>
+      <span class="sep">/</span>
+      <a href="#">Portfolio</a>
+      <span class="sep">/</span>
+      <span class="now" id="crumbNow">Architecture</span>
+    </div>
+  </div>
+
+  <!-- ============ HERO / PAGE HEADER ============ -->
+  <section class="hero" data-screen-label="02 Hero">
+    <div class="container hero-inner">
+      <div>
+        <span class="hero-num">02 / Discipline — <span id="catNum">01</span> of 04</span>
+        <h1 class="hero-title">
+          <span id="heroTitle">Architecture</span><br/>
+          <span class="ital">Portfolio</span>
+        </h1>
+      </div>
+      <div class="hero-meta">
+        <p class="hero-summary" id="heroSummary">
+          A selection of built and unbuilt architectural work across residential, civic and cultural typologies — from small interventions to masterplanned districts.
+        </p>
+        <div class="hero-counts">
+          <div>
+            <span class="wf-label">Total</span>
+            <span class="n" id="cTotal">24</span>
+          </div>
+          <div>
+            <span class="wf-label">Completed</span>
+            <span class="n" id="cDone">14</span>
+          </div>
+          <div>
+            <span class="wf-label">Ongoing</span>
+            <span class="n" id="cWip">06</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FILTER BAR ============ -->
+  <div class="filter" data-screen-label="03 Filter">
+    <div class="container filter-inner">
+      <ul class="filter-tabs" id="filterTabs">
+        <li><a data-status="all" class="active">All <span class="count">24</span></a></li>
+        <li><a data-status="completed">Completed <span class="count">14</span></a></li>
+        <li><a data-status="construction">Under Construction <span class="count">04</span></a></li>
+        <li><a data-status="ongoing">Ongoing <span class="count">02</span></a></li>
+        <li><a data-status="upcoming">Upcoming <span class="count">02</span></a></li>
+        <li><a data-status="concept">Concept <span class="count">02</span></a></li>
+      </ul>
+      <div class="filter-right">
+        <label class="sort">
+          <span class="wf-label">Sort</span>
+          <select>
+            <option>Year — Newest</option>
+            <option>Year — Oldest</option>
+            <option>Name — A–Z</option>
+            <option>Status</option>
+          </select>
+        </label>
+        <div class="view-toggle" role="tablist" aria-label="View">
+          <button class="active" aria-label="List view">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+          </button>
+          <button aria-label="Grid view">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ LISTING ============ -->
+  <section class="listing" data-screen-label="04 Listing">
+    <div class="container">
+
+      <div class="grid" id="projGrid">
+
+        <a class="card" href="#">
+          <div class="card-media">
+            <span class="card-idx">01</span>
+            <span class="card-status"><span class="status completed">Completed</span></span>
+            <div class="wf-img"><span class="wf-tag">img · cliff-house</span><span class="wf-center">Project Image</span></div>
+          </div>
+          <div class="card-body">
+            <div class="card-meta-top"><span>Architecture</span><span>2024</span></div>
+            <h3 class="card-name">House on the Cliff</h3>
+            <span class="card-sub">Cornwall, UK · 480 m²</span>
+            <div class="card-foot">
+              <span class="wf-label">View Project</span>
+              <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="#">
+          <div class="card-media">
+            <span class="card-idx">02</span>
+            <span class="card-status"><span class="status construction">Under Construction</span></span>
+            <div class="wf-img"><span class="wf-tag">img · foundry-lofts</span><span class="wf-center">Project Image</span></div>
+          </div>
+          <div class="card-body">
+            <div class="card-meta-top"><span>Adaptive Reuse</span><span>2025</span></div>
+            <h3 class="card-name">Kerridge Foundry Lofts</h3>
+            <span class="card-sub">Manchester, UK · 12 Units</span>
+            <div class="card-foot">
+              <span class="wf-label">View Project</span>
+              <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="#">
+          <div class="card-media">
+            <span class="card-idx">03</span>
+            <span class="card-status"><span class="status completed">Completed</span></span>
+            <div class="wf-img"><span class="wf-tag">img · aalto-library</span><span class="wf-center">Project Image</span></div>
+          </div>
+          <div class="card-body">
+            <div class="card-meta-top"><span>Civic</span><span>2023</span></div>
+            <h3 class="card-name">Atelier Aalto Library</h3>
+            <span class="card-sub">Helsinki, FI · 2,200 m²</span>
+            <div class="card-foot">
+              <span class="wf-label">View Project</span>
+              <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="#">
+          <div class="card-media">
+            <span class="card-idx">04</span>
+            <span class="card-status"><span class="status ongoing">Ongoing</span></span>
+            <div class="wf-img"><span class="wf-tag">img · sequoia-pavilion</span><span class="wf-center">Project Image</span></div>
+          </div>
+          <div class="card-body">
+            <div class="card-meta-top"><span>Cultural</span><span>2025</span></div>
+            <h3 class="card-name">The Sequoia Pavilion</h3>
+            <span class="card-sub">Lake District, UK · 640 m²</span>
+            <div class="card-foot">
+              <span class="wf-label">View Project</span>
+              <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="#">
+          <div class="card-media">
+            <span class="card-idx">05</span>
+            <span class="card-status"><span class="status completed">Completed</span></span>
+            <div class="wf-img"><span class="wf-tag">img · print-works</span><span class="wf-center">Project Image</span></div>
+          </div>
+          <div class="card-body">
+            <div class="card-meta-top"><span>Mixed-Use</span><span>2022</span></div>
+            <h3 class="card-name">Shoreditch Print Works</h3>
+            <span class="card-sub">London, UK · 8,400 m²</span>
+            <div class="card-foot">
+              <span class="wf-label">View Project</span>
+              <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="#">
+          <div class="card-media">
+            <span class="card-idx">06</span>
+            <span class="card-status"><span class="status completed">Completed</span></span>
+            <div class="wf-img"><span class="wf-tag">img · casa-di-pietra</span><span class="wf-center">Project Image</span></div>
+          </div>
+          <div class="card-body">
+            <div class="card-meta-top"><span>Residence</span><span>2022</span></div>
+            <h3 class="card-name">Casa di Pietra</h3>
+            <span class="card-sub">Puglia, IT · 320 m²</span>
+            <div class="card-foot">
+              <span class="wf-label">View Project</span>
+              <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="#">
+          <div class="card-media">
+            <span class="card-idx">07</span>
+            <span class="card-status"><span class="status construction">Under Construction</span></span>
+            <div class="wf-img"><span class="wf-tag">img · research-station</span><span class="wf-center">Project Image</span></div>
+          </div>
+          <div class="card-body">
+            <div class="card-meta-top"><span>Institutional</span><span>2026</span></div>
+            <h3 class="card-name">North Sea Research Station</h3>
+            <span class="card-sub">Bergen, NO · 1,800 m²</span>
+            <div class="card-foot">
+              <span class="wf-label">View Project</span>
+              <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="#">
+          <div class="card-media">
+            <span class="card-idx">08</span>
+            <span class="card-status"><span class="status upcoming">Upcoming</span></span>
+            <div class="wf-img"><span class="wf-tag">img · mews-n7</span><span class="wf-center">Project Image</span></div>
+          </div>
+          <div class="card-body">
+            <div class="card-meta-top"><span>Private Residence</span><span>2026</span></div>
+            <h3 class="card-name">Mews House N7</h3>
+            <span class="card-sub">Islington, UK · 210 m²</span>
+            <div class="card-foot">
+              <span class="wf-label">View Project</span>
+              <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="#">
+          <div class="card-media">
+            <span class="card-idx">09</span>
+            <span class="card-status"><span class="status concept">Concept</span></span>
+            <div class="wf-img"><span class="wf-tag">img · tsukiji-pavilion</span><span class="wf-center">Project Image</span></div>
+          </div>
+          <div class="card-body">
+            <div class="card-meta-top"><span>Cultural</span><span>2027</span></div>
+            <h3 class="card-name">Tsukiji Cultural Pavilion</h3>
+            <span class="card-sub">Tokyo, JP · 1,100 m²</span>
+            <div class="card-foot">
+              <span class="wf-label">View Project</span>
+              <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="#">
+          <div class="card-media">
+            <span class="card-idx">10</span>
+            <span class="card-status"><span class="status completed">Completed</span></span>
+            <div class="wf-img"><span class="wf-tag">img · st-marks</span><span class="wf-center">Project Image</span></div>
+          </div>
+          <div class="card-body">
+            <div class="card-meta-top"><span>Heritage</span><span>2021</span></div>
+            <h3 class="card-name">St. Mark&apos;s Almshouses</h3>
+            <span class="card-sub">Edinburgh, UK · 2,400 m²</span>
+            <div class="card-foot">
+              <span class="wf-label">View Project</span>
+              <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="#">
+          <div class="card-media">
+            <span class="card-idx">11</span>
+            <span class="card-status"><span class="status construction">Under Construction</span></span>
+            <div class="wf-img"><span class="wf-tag">img · highland-lodge</span><span class="wf-center">Project Image</span></div>
+          </div>
+          <div class="card-body">
+            <div class="card-meta-top"><span>Hospitality</span><span>2025</span></div>
+            <h3 class="card-name">Highland Visitor Lodge</h3>
+            <span class="card-sub">Cairngorms, UK · 980 m²</span>
+            <div class="card-foot">
+              <span class="wf-label">View Project</span>
+              <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </div>
+          </div>
+        </a>
+
+        <a class="card" href="#">
+          <div class="card-media">
+            <span class="card-idx">12</span>
+            <span class="card-status"><span class="status upcoming">Upcoming</span></span>
+            <div class="wf-img"><span class="wf-tag">img · porto-towers</span><span class="wf-center">Project Image</span></div>
+          </div>
+          <div class="card-body">
+            <div class="card-meta-top"><span>Residential</span><span>2027</span></div>
+            <h3 class="card-name">Porto Riverbank Towers</h3>
+            <span class="card-sub">Porto, PT · 18,000 m²</span>
+            <div class="card-foot">
+              <span class="wf-label">View Project</span>
+              <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </div>
+          </div>
+        </a>
+
+      </div>
+
+      <!-- ============ PAGINATION ============ -->
+      <div class="pager">
+        <span class="page-info">Showing 01 — 12 of 24</span>
+        <div class="page-nums">
+          <a class="active">01</a>
+          <a>02</a>
+        </div>
+        <div class="page-nav">
+          <a>← Prev</a>
+          <a>Next →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer data-screen-label="05 Footer">
+    <div class="container">
+      <div class="foot-top">
+        <div class="col">
+          <h4>Studio Location</h4>
+          <div class="foot-map" aria-label="Map placeholder">
+            <span class="foot-map-tag">Map · Embed</span>
+            <span class="pin" aria-hidden="true"></span>
+          </div>
+          <p>22 Foundry Lane, Studio 4<br/>Shoreditch, London EC2A 3DB<br/>United Kingdom</p>
+        </div>
+
+        <div class="col">
+          <h4>Contact</h4>
+          <ul>
+            <li>studio@practicearchitect.co</li>
+            <li>press@practicearchitect.co</li>
+            <li>+44 (0) 20 7946 0911</li>
+            <li>Mon — Fri · 09:00–18:00</li>
+          </ul>
+        </div>
+
+        <div class="col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Architecture</a></li>
+            <li><a href="#">Interior</a></li>
+            <li><a href="#">Planning</a></li>
+            <li><a href="#">Landscape</a></li>
+          </ul>
+        </div>
+
+        <div class="col">
+          <h4>Practice</h4>
+          <div class="foot-logo">
+            <span class="logo-mark" aria-hidden="true"></span>
+            <span class="logo-text">Practice Architect</span>
+          </div>
+          <p style="color:#9a9a9a;">A studio for architecture, interior, planning and landscape. Drawing in black, building in light.</p>
+        </div>
+      </div>
+
+      <div class="foot-bottom">
+        <span>© 2026 Practice Architect — All rights reserved.</span>
+        <div class="socials">
+          <a href="#">Instagram</a>
+          <a href="#">Are.na</a>
+          <a href="#">LinkedIn</a>
+          <a href="#">Newsletter</a>
+        </div>
+        <span>Site v1.0 · Wireframe</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Category switching — title / breadcrumb / counts adapt
+    const catData = {
+      home:         { title: "All Work",      idx: "00", total: 96, done: 62, wip: 14, summary: "The full studio portfolio across every discipline — built, ongoing and speculative work, sorted by year." },
+      architecture: { title: "Architecture",  idx: "01", total: 24, done: 14, wip: 6,  summary: "A selection of built and unbuilt architectural work across residential, civic and cultural typologies — from small interventions to masterplanned districts." },
+      interior:     { title: "Interior",      idx: "02", total: 31, done: 22, wip: 4,  summary: "Interior commissions spanning hospitality, retail and residential — material-led, atmosphere-first, never decorative." },
+      planning:     { title: "Planning",      idx: "03", total: 18, done: 9,  wip: 3,  summary: "Urban planning, masterplanning and feasibility studies — neighbourhood-scale work that knits architecture to its city." },
+      landscape:    { title: "Landscape",     idx: "04", total: 23, done: 17, wip: 1,  summary: "Landscape, garden and public-realm design. Sites read first as terrain, then as plan." }
+    };
+
+    document.querySelectorAll('.nav-links a').forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        const cat = link.dataset.cat;
+        const d = catData[cat];
+        if (!d) return;
+        document.getElementById('heroTitle').textContent = d.title;
+        document.getElementById('catNum').textContent = d.idx;
+        document.getElementById('cTotal').textContent = String(d.total).padStart(2,'0');
+        document.getElementById('cDone').textContent = String(d.done).padStart(2,'0');
+        document.getElementById('cWip').textContent = String(d.wip).padStart(2,'0');
+        document.getElementById('heroSummary').textContent = d.summary;
+        document.getElementById('crumbNow').textContent = d.title;
+      });
+    });
+
+    // Status filter
+    document.querySelectorAll('.filter-tabs a').forEach(tab => {
+      tab.addEventListener('click', e => {
+        e.preventDefault();
+        document.querySelectorAll('.filter-tabs a').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const s = tab.dataset.status;
+        document.querySelectorAll('.card').forEach(card => {
+          const cardStatus = card.querySelector('.status').classList[1];
+          card.style.display = (s === 'all' || cardStatus === s) ? '' : 'none';
+        });
+      });
+    });
+
+    // View toggle (visual only on wireframe)
+    document.querySelectorAll('.view-toggle button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  </script>
+
+  <!-- ============ TWEAKS ============ -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <div id="tweaks-root"></div>
+  <script type="text/babel">
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "showNav": true,
+      "showBreadcrumb": true,
+      "showHero": true,
+      "showFilter": false,
+      "showListing": true,
+      "showPagination": true,
+      "showFooter": true,
+      "cardColumns": 3,
+      "cardAspect": "4 \/ 5"
+    }/*EDITMODE-END*/;
+
+    function ListingTweaks() {
+      const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+      React.useEffect(() => {
+        const html = document.documentElement;
+        html.classList.toggle('tw-hide-nav',        !t.showNav);
+        html.classList.toggle('tw-hide-breadcrumb', !t.showBreadcrumb);
+        html.classList.toggle('tw-hide-hero',       !t.showHero);
+        html.classList.toggle('tw-hide-filter',     !t.showFilter);
+        html.classList.toggle('tw-hide-listing',    !t.showListing);
+        html.classList.toggle('tw-hide-pagination', !t.showPagination);
+        html.classList.toggle('tw-hide-footer',     !t.showFooter);
+      }, [t.showNav, t.showBreadcrumb, t.showHero, t.showFilter, t.showListing, t.showPagination, t.showFooter]);
+
+      React.useEffect(() => {
+        const grid = document.getElementById('projGrid');
+        if (grid) grid.style.gridTemplateColumns = `repeat(${t.cardColumns}, 1fr)`;
+        document.querySelectorAll('.card-media').forEach(el => {
+          el.style.aspectRatio = t.cardAspect;
+        });
+      }, [t.cardColumns, t.cardAspect]);
+
+      return (
+        <TweaksPanel title="Tweaks">
+          <TweakSection label="Sections" />
+          <TweakToggle label="Navbar"        value={t.showNav}        onChange={v => setTweak('showNav', v)} />
+          <TweakToggle label="Breadcrumb"    value={t.showBreadcrumb} onChange={v => setTweak('showBreadcrumb', v)} />
+          <TweakToggle label="Hero / Header" value={t.showHero}       onChange={v => setTweak('showHero', v)} />
+          <TweakToggle label="Filter bar"    value={t.showFilter}     onChange={v => setTweak('showFilter', v)} />
+          <TweakToggle label="Project grid"  value={t.showListing}    onChange={v => setTweak('showListing', v)} />
+          <TweakToggle label="Pagination"    value={t.showPagination} onChange={v => setTweak('showPagination', v)} />
+          <TweakToggle label="Footer"        value={t.showFooter}     onChange={v => setTweak('showFooter', v)} />
+
+          <TweakSection label="Grid layout" />
+          <TweakRadio  label="Columns" value={t.cardColumns}
+                       options={[2, 3, 4]}
+                       onChange={v => setTweak('cardColumns', v)} />
+          <TweakRadio  label="Card aspect" value={t.cardAspect}
+                       options={['1 / 1', '4 / 5', '3 / 4']}
+                       onChange={v => setTweak('cardAspect', v)} />
+        </TweaksPanel>
+      );
+    }
+
+    const __tw_root = ReactDOM.createRoot(document.getElementById('tweaks-root'));
+    __tw_root.render(<ListingTweaks />);
+  </script>
+</body>
+</html>

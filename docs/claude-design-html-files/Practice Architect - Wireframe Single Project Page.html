@@ -1,0 +1,1062 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Practice Architect — Project Detail Wireframe</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root {
+    --ink: #111;
+    --line: #c9c9c9;
+    --line-strong: #1a1a1a;
+    --muted: #6b6b6b;
+    --paper: #fafafa;
+    --placeholder: #ececec;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- primitives ---------- */
+  .wf-label {
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .wf-tag {
+    position: absolute; top: 8px; left: 8px;
+    background: #fff; border: 1px solid var(--line);
+    padding: 2px 6px;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .wf-img {
+    position: relative;
+    background:
+      linear-gradient(135deg, transparent calc(50% - 0.5px), var(--line) calc(50% - 0.5px), var(--line) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      linear-gradient(45deg, transparent calc(50% - 0.5px), var(--line) calc(50% - 0.5px), var(--line) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      var(--placeholder);
+    border: 1px solid var(--line-strong);
+  }
+  .wf-img .wf-center {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #333; background: rgba(255,255,255,0.85);
+    padding: 4px 10px;
+    width: max-content; height: max-content;
+    margin: auto;
+    border: 1px solid var(--line-strong);
+  }
+  .container { max-width: 1360px; margin: 0 auto; padding: 0 56px; }
+  .container.wide { max-width: 1600px; }
+
+  /* ---------- navbar ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: #fff; border-bottom: 1px solid var(--line-strong);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 76px;
+  }
+  .logo { display: inline-flex; align-items: baseline; gap: 10px; text-decoration: none; color: inherit; }
+  .logo-mark {
+    width: 28px; height: 28px;
+    border: 1.5px solid var(--ink);
+    display: inline-block;
+    transform: rotate(45deg);
+    position: relative;
+  }
+  .logo-mark::after { content: ""; position: absolute; inset: 6px; border: 1px solid var(--ink); }
+  .logo-text {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 18px; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 500;
+  }
+  .nav-links {
+    display: flex; gap: 40px; list-style: none; margin: 0; padding: 0; align-items: center;
+  }
+  .nav-links a {
+    text-decoration: none; color: var(--ink);
+    font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase;
+    padding-bottom: 4px; border-bottom: 1px solid transparent;
+    cursor: pointer;
+  }
+  .nav-links a.active, .nav-links a:hover { border-bottom-color: var(--ink); }
+
+  .anno {
+    border-top: 1px dashed var(--line);
+    border-bottom: 1px dashed var(--line);
+    background: #fff;
+  }
+  .anno-inner {
+    display: flex; justify-content: space-between; align-items: center;
+    height: 28px;
+  }
+
+  /* ---------- breadcrumb ---------- */
+  .crumb { padding: 28px 0 0; }
+  .crumb-inner {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .crumb-left { display: flex; align-items: center; gap: 10px; }
+  .crumb-inner a { color: var(--muted); text-decoration: none; }
+  .crumb-inner a:hover { color: var(--ink); }
+  .crumb-inner .sep { opacity: 0.5; }
+  .crumb-inner .now { color: var(--ink); }
+  .crumb-pager { display: flex; align-items: center; gap: 16px; }
+  .crumb-pager a {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--ink); text-decoration: none;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+  }
+  .crumb-pager a:hover { border-color: var(--ink); }
+  .crumb-pager svg { width: 12px; height: 12px; }
+
+  /* ---------- hero ---------- */
+  .hero {
+    padding: 28px 0 0;
+  }
+  .hero-eyebrow {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 20px;
+  }
+  .hero-eyebrow .label {
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 11px; letter-spacing: 0.2em; color: var(--muted);
+  }
+  .hero-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 1px solid var(--line-strong);
+  }
+  .hero-image .wf-img { width: 100%; height: 100%; border: none; }
+  .hero-image .corner {
+    position: absolute;
+    width: 16px; height: 16px;
+    border-color: #fff;
+  }
+  .hero-image .corner.tl { top: -1px; left: -1px; border-top: 1px solid var(--ink); border-left: 1px solid var(--ink); }
+  .hero-image .corner.tr { top: -1px; right: -1px; border-top: 1px solid var(--ink); border-right: 1px solid var(--ink); }
+  .hero-image .corner.bl { bottom: -1px; left: -1px; border-bottom: 1px solid var(--ink); border-left: 1px solid var(--ink); }
+  .hero-image .corner.br { bottom: -1px; right: -1px; border-bottom: 1px solid var(--ink); border-right: 1px solid var(--ink); }
+  .hero-caption {
+    position: absolute; left: 16px; bottom: 16px;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #fff; border: 1px solid var(--line-strong);
+    padding: 6px 12px;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .hero-credit {
+    position: absolute; right: 16px; bottom: 16px;
+    display: inline-flex; align-items: center; gap: 10px;
+    background: #fff; border: 1px solid var(--line-strong);
+    padding: 6px 12px;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ---------- project info ---------- */
+  .info {
+    padding: 64px 0 96px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .info-num {
+    display: block;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 11px; letter-spacing: 0.2em; color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .info-title {
+    font-family: "Times New Roman", Times, serif;
+    font-weight: 400;
+    font-size: 96px;
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    text-transform: uppercase;
+  }
+  .info-title .ital { font-style: italic; font-weight: 300; color: #2a2a2a; }
+  .info-subtitle {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin: 12px 0 0;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    margin-top: 56px;
+    border-top: 1px solid var(--line-strong);
+    padding-top: 40px;
+  }
+  .info-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 40px;
+    align-content: start;
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 6px; }
+  .meta-item .k {
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .meta-item .v {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 22px;
+    line-height: 1.25;
+  }
+  .info-desc { font-size: 15px; line-height: 1.8; color: #2a2a2a; }
+  .info-desc p { margin: 0 0 16px; }
+  .info-desc .lead {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 24px;
+    line-height: 1.4;
+    color: var(--ink);
+    margin-bottom: 28px;
+  }
+
+  /* status badge (carried from listing) */
+  .status {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+    border: 1px solid var(--ink);
+    padding: 5px 10px;
+    background: #fff;
+    white-space: nowrap;
+    width: max-content;
+  }
+  .status::before {
+    content: ""; width: 6px; height: 6px; background: var(--ink);
+  }
+  .status.completed::before { background: var(--ink); }
+  .status.construction { background: #111; color: #fff; border-color: #111; }
+  .status.construction::before { background: #fff; }
+
+  /* ---------- gallery ---------- */
+  .gallery {
+    padding: 96px 0;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    margin-bottom: 48px;
+    gap: 24px;
+  }
+  .section-num {
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 11px; letter-spacing: 0.2em; color: var(--muted);
+    margin-bottom: 12px; display: block;
+  }
+  .section-title {
+    font-family: "Times New Roman", Times, serif;
+    font-weight: 400;
+    font-size: 44px;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .section-sub { max-width: 420px; color: var(--muted); font-size: 13px; }
+
+  .gal-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-auto-rows: 180px;
+    gap: 16px;
+  }
+  .gal-item {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid var(--line-strong);
+    background: #fff;
+    transition: transform 0.4s cubic-bezier(.2,.7,.2,1);
+  }
+  .gal-item:hover { transform: translateY(-3px); }
+  .gal-item .wf-img {
+    width: 100%; height: 100%; border: none;
+    transition: transform 0.6s cubic-bezier(.2,.7,.2,1);
+  }
+  .gal-item:hover .wf-img { transform: scale(1.04); }
+  .gal-item:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+  .gal-idx {
+    position: absolute; top: 10px; right: 10px;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.16em;
+    background: #fff; border: 1px solid var(--line-strong);
+    padding: 3px 7px;
+    color: var(--ink);
+    z-index: 2;
+  }
+  .gal-kind {
+    position: absolute; bottom: 10px; left: 10px;
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase;
+    background: rgba(255,255,255,0.95);
+    border: 1px solid var(--line-strong);
+    padding: 4px 8px;
+    z-index: 2;
+  }
+  .gal-kind.video::before {
+    content: ""; width: 0; height: 0;
+    border-left: 6px solid var(--ink);
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+  }
+  .gal-kind.photo::before {
+    content: ""; width: 8px; height: 8px; background: var(--ink);
+  }
+  .gal-kind.plan::before {
+    content: ""; width: 8px; height: 8px; border: 1px solid var(--ink); transform: rotate(45deg);
+  }
+
+  /* size variations — editorial rhythm */
+  .gal-item.size-l   { grid-column: span 6; grid-row: span 2; }
+  .gal-item.size-m   { grid-column: span 4; grid-row: span 2; }
+  .gal-item.size-s   { grid-column: span 3; grid-row: span 2; }
+  .gal-item.size-wide{ grid-column: span 8; grid-row: span 2; }
+  .gal-item.size-tall{ grid-column: span 4; grid-row: span 3; }
+
+  /* ---------- lightbox ---------- */
+  .lb {
+    position: fixed; inset: 0;
+    background: rgba(8,8,8,0.96);
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    color: #fff;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+  .lb.open { display: flex; }
+  .lb-top {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 22px 32px;
+    border-bottom: 1px solid #222;
+  }
+  .lb-meta {
+    display: flex; align-items: center; gap: 28px;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #c2c2c2;
+  }
+  .lb-meta .now { color: #fff; }
+  .lb-close {
+    width: 40px; height: 40px;
+    background: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .lb-close:hover { background: #fff; color: #111; }
+  .lb-close svg { width: 14px; height: 14px; }
+
+  .lb-stage {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    touch-action: pan-y;
+  }
+  .lb-media {
+    width: 100%;
+    max-width: 1400px;
+    aspect-ratio: 16 / 9;
+    position: relative;
+    background: #111;
+    border: 1px solid #333;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+  .lb-media .wf-img {
+    width: 100%; height: 100%;
+    border: none;
+    background:
+      linear-gradient(135deg, transparent calc(50% - 0.5px), #2a2a2a calc(50% - 0.5px), #2a2a2a calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      linear-gradient(45deg, transparent calc(50% - 0.5px), #2a2a2a calc(50% - 0.5px), #2a2a2a calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      #1a1a1a;
+  }
+  .lb-media .wf-center {
+    background: rgba(20,20,20,0.92);
+    color: #d6d6d6;
+    border-color: #444;
+  }
+  .lb-media.video::after {
+    content: "";
+    position: absolute; inset: 0; margin: auto;
+    width: 0; height: 0;
+    border-left: 32px solid #fff;
+    border-top: 22px solid transparent;
+    border-bottom: 22px solid transparent;
+    opacity: 0.85;
+    pointer-events: none;
+  }
+  .lb-tag {
+    position: absolute; top: 12px; left: 12px;
+    background: #111; color: #d6d6d6;
+    border: 1px solid #333;
+    padding: 4px 9px;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+
+  .lb-arrow {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 56px; height: 56px;
+    background: rgba(20,20,20,0.7);
+    border: 1px solid #fff;
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .lb-arrow:hover { background: #fff; color: #111; }
+  .lb-arrow.prev { left: 32px; }
+  .lb-arrow.next { right: 32px; }
+  .lb-arrow svg { width: 18px; height: 18px; }
+
+  .lb-bottom {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 32px 22px;
+    gap: 24px;
+  }
+  .lb-caption {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 16px;
+    color: #ededed;
+    max-width: 60%;
+  }
+  .lb-caption small {
+    display: block;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: #9a9a9a; margin-top: 4px;
+  }
+  .lb-strip {
+    display: flex; gap: 6px;
+    align-items: center;
+    max-width: 38%;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .lb-strip::-webkit-scrollbar { height: 6px; }
+  .lb-strip::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+  .lb-thumb {
+    flex: 0 0 64px;
+    height: 44px;
+    border: 1px solid #2c2c2c;
+    background:
+      linear-gradient(135deg, transparent calc(50% - 0.5px), #2a2a2a calc(50% - 0.5px), #2a2a2a calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      linear-gradient(45deg, transparent calc(50% - 0.5px), #2a2a2a calc(50% - 0.5px), #2a2a2a calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      #1a1a1a;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.15s ease, border-color 0.15s ease;
+  }
+  .lb-thumb:hover { opacity: 0.9; }
+  .lb-thumb.active { opacity: 1; border-color: #fff; }
+
+  /* ---------- next project block ---------- */
+  .next-block {
+    padding: 96px 0;
+    border-bottom: 1px solid var(--line-strong);
+    background: #fff;
+  }
+  .next-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .next-media { aspect-ratio: 4 / 3; }
+  .next-media .wf-img { width: 100%; height: 100%; }
+  .next-copy { display: flex; flex-direction: column; gap: 16px; }
+  .next-copy h3 {
+    font-family: "Times New Roman", Times, serif;
+    font-weight: 400;
+    font-size: 56px;
+    line-height: 1.05;
+    margin: 0;
+    text-transform: uppercase;
+  }
+  .next-cta {
+    margin-top: 16px;
+    display: inline-flex; align-items: center; gap: 12px;
+    border: 1px solid var(--ink);
+    padding: 14px 22px;
+    width: max-content;
+    font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+    text-decoration: none; color: var(--ink);
+  }
+  .next-cta:hover { background: var(--ink); color: #fff; }
+  .next-cta svg { width: 14px; height: 14px; }
+
+  /* ---------- footer ---------- */
+  footer { background: #0d0d0d; color: #ededed; }
+  .foot-top {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 56px;
+    padding: 80px 0 64px;
+  }
+  .foot-top .col h4 {
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #9a9a9a;
+    margin: 0 0 18px;
+    font-weight: 500;
+  }
+  .foot-top a, .foot-top p {
+    color: #ededed; text-decoration: none;
+    font-size: 13px; line-height: 1.8; margin: 0;
+  }
+  .foot-top ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .foot-map {
+    width: 100%; height: 240px;
+    border: 1px solid #2b2b2b;
+    background:
+      linear-gradient(135deg, transparent calc(50% - 0.5px), #2b2b2b calc(50% - 0.5px), #2b2b2b calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      linear-gradient(45deg, transparent calc(50% - 0.5px), #2b2b2b calc(50% - 0.5px), #2b2b2b calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      repeating-linear-gradient(0deg, #141414 0 24px, #181818 24px 48px),
+      #141414;
+    position: relative; margin-bottom: 18px;
+  }
+  .foot-map .pin {
+    position: absolute; top: 48%; left: 42%;
+    width: 14px; height: 14px; background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.15);
+  }
+  .foot-map .pin::after {
+    content: ""; position: absolute; left: 50%; top: 100%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #fff;
+  }
+  .foot-map-tag {
+    position: absolute; top: 12px; left: 12px;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #9a9a9a;
+    border: 1px solid #2b2b2b; padding: 3px 7px;
+    background: #0d0d0d;
+  }
+  .foot-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .foot-logo .logo-mark { border-color: #fff; }
+  .foot-logo .logo-mark::after { border-color: #fff; }
+  .foot-logo .logo-text { color: #fff; }
+  .foot-bottom {
+    border-top: 1px solid #1f1f1f;
+    padding: 22px 0;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: #7d7d7d;
+    letter-spacing: 0.08em;
+  }
+  .foot-bottom a { color: #7d7d7d; text-decoration: none; }
+  .foot-bottom .socials { display: flex; gap: 22px; }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 1100px) {
+    .container { padding: 0 24px; }
+    .info-title { font-size: 64px; }
+    .info-grid, .next-inner { grid-template-columns: 1fr; gap: 32px; }
+    .gal-grid { grid-template-columns: repeat(6, 1fr); grid-auto-rows: 140px; }
+    .gal-item.size-l    { grid-column: span 6; grid-row: span 2; }
+    .gal-item.size-m    { grid-column: span 3; grid-row: span 2; }
+    .gal-item.size-s    { grid-column: span 3; grid-row: span 2; }
+    .gal-item.size-wide { grid-column: span 6; grid-row: span 2; }
+    .gal-item.size-tall { grid-column: span 3; grid-row: span 3; }
+    .foot-top { grid-template-columns: 1fr 1fr; }
+    .lb-arrow.prev { left: 12px; } .lb-arrow.next { right: 12px; }
+    .lb-arrow { width: 44px; height: 44px; }
+    .lb-strip { max-width: 100%; }
+  }
+  @media (max-width: 640px) {
+    .container { padding: 0 18px; }
+    .info-title { font-size: 44px; }
+    .info-meta { grid-template-columns: 1fr; }
+    .gal-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 140px; }
+    .gal-item.size-l, .gal-item.size-m, .gal-item.size-s,
+    .gal-item.size-wide, .gal-item.size-tall { grid-column: span 2; grid-row: span 2; }
+    .next-copy h3 { font-size: 36px; }
+    .lb-bottom { flex-direction: column; align-items: flex-start; gap: 12px; padding: 12px 16px 18px; }
+    .lb-caption { max-width: 100%; }
+    .foot-top { grid-template-columns: 1fr; gap: 32px; }
+    .foot-bottom { flex-direction: column; gap: 10px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" data-screen-label="01 Navbar">
+    <div class="container nav-inner">
+      <a href="#" class="logo" aria-label="Practice Architect">
+        <span class="logo-mark" aria-hidden="true"></span>
+        <span class="logo-text">Practice Architect</span>
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <li><a>Home</a></li>
+          <li><a class="active">Architecture</a></li>
+          <li><a>Interior</a></li>
+          <li><a>Planning</a></li>
+          <li><a>Landscape</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="anno">
+    <div class="container anno-inner">
+      <span class="wf-label">Project Detail · Single Project View</span>
+      <span class="wf-label">Wireframe · Practice Architect · Detail v1</span>
+    </div>
+  </div>
+
+  <!-- ============ BREADCRUMB + PROJECT PAGER ============ -->
+  <div class="crumb">
+    <div class="container crumb-inner">
+      <div class="crumb-left">
+        <a href="#">Practice</a>
+        <span class="sep">/</span>
+        <a href="#">Architecture</a>
+        <span class="sep">/</span>
+        <span class="now">House on the Cliff</span>
+      </div>
+      <div class="crumb-pager">
+        <a href="#" aria-label="Previous project">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5l-7 7 7 7"/></svg>
+          <span>Prev · 02 / 24</span>
+        </a>
+        <a href="#" aria-label="Next project">
+          <span>Next · 04 / 24</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" data-screen-label="02 Hero Image">
+    <div class="container wide">
+      <div class="hero-eyebrow">
+        <span class="label">02 / Featured Image · 16:9</span>
+        <span class="label">Click image to open lightbox</span>
+      </div>
+      <div class="hero-image" data-gallery-trigger data-index="0">
+        <div class="wf-img">
+          <span class="wf-tag">img · hero-featured.jpg</span>
+          <span class="wf-center">Featured Project Image</span>
+        </div>
+        <span class="corner tl" aria-hidden="true"></span>
+        <span class="corner tr" aria-hidden="true"></span>
+        <span class="corner bl" aria-hidden="true"></span>
+        <span class="corner br" aria-hidden="true"></span>
+        <span class="hero-caption">House on the Cliff · Exterior</span>
+        <span class="hero-credit">© Photography · Studio</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROJECT INFO ============ -->
+  <section class="info" data-screen-label="03 Project Info">
+    <div class="container">
+      <span class="info-num">03 / Project Overview</span>
+      <h1 class="info-title">House on the Cliff<br/><span class="ital">Cornwall</span></h1>
+      <p class="info-subtitle">Private Residence · 480 m² · Coastal · United Kingdom</p>
+
+      <div class="info-grid">
+        <div class="info-meta">
+          <div class="meta-item">
+            <span class="k">Status</span>
+            <span class="status completed">Completed</span>
+          </div>
+          <div class="meta-item">
+            <span class="k">Year</span>
+            <span class="v">2024</span>
+          </div>
+          <div class="meta-item">
+            <span class="k">Location</span>
+            <span class="v">Cornwall, UK</span>
+          </div>
+          <div class="meta-item">
+            <span class="k">Typology</span>
+            <span class="v">Private Residence</span>
+          </div>
+          <div class="meta-item">
+            <span class="k">Area</span>
+            <span class="v">480 m²</span>
+          </div>
+          <div class="meta-item">
+            <span class="k">Client</span>
+            <span class="v">Private</span>
+          </div>
+          <div class="meta-item">
+            <span class="k">Team</span>
+            <span class="v">P. Archer (Lead)<br/>R. Okafor, M. Lin</span>
+          </div>
+          <div class="meta-item">
+            <span class="k">Awards</span>
+            <span class="v">Civic Trust · 2024<br/>AJ100 Shortlist</span>
+          </div>
+        </div>
+
+        <div class="info-desc">
+          <p class="lead">A timber and concrete residence perched on a granite headland — a building that reads the weather as much as the site.</p>
+          <p>The brief asked for a long, low house that would sit lightly against the cliff edge and frame the Atlantic without competing with it. The plan is a single linear bar, splayed along the contour, with bedroom wings folded back into the slope and living spaces cantilevered out toward the sea.</p>
+          <p>Inside, board-formed concrete walls hold their cool gray light against the warmth of cedar joinery and brushed oak floors. A continuous clerestory traces the spine of the building, washing the inner wall and registering the passage of cloud across the day.</p>
+          <p>External material was kept to a tight palette — local granite at the plinth, pre-weathered larch at the cladding, oxidised steel at openings — a deliberate restraint that lets the landscape do most of the work.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GALLERY ============ -->
+  <section class="gallery" data-screen-label="04 Media Gallery">
+    <div class="container wide">
+      <div class="section-head">
+        <div>
+          <span class="section-num">04 / Media — Photo, Video, Plan</span>
+          <h2 class="section-title">Project Gallery</h2>
+        </div>
+        <p class="section-sub">
+          Twelve photographs, two films and a set of drawings. Click any tile to open the fullscreen viewer; use ← → to step between items.
+        </p>
+      </div>
+
+      <div class="gal-grid" id="galGrid">
+        <!-- Items use data-gallery-trigger to open lightbox at given index -->
+        <div class="gal-item size-l"    data-gallery-trigger data-index="1" tabindex="0">
+          <span class="gal-idx">01</span>
+          <span class="gal-kind photo">Photo</span>
+          <div class="wf-img"><span class="wf-tag">img · interior-living</span><span class="wf-center">Interior Living</span></div>
+        </div>
+        <div class="gal-item size-s"    data-gallery-trigger data-index="2" tabindex="0">
+          <span class="gal-idx">02</span>
+          <span class="gal-kind photo">Photo</span>
+          <div class="wf-img"><span class="wf-tag">img · stair-detail</span><span class="wf-center">Stair Detail</span></div>
+        </div>
+        <div class="gal-item size-s"    data-gallery-trigger data-index="3" tabindex="0">
+          <span class="gal-idx">03</span>
+          <span class="gal-kind video">Film</span>
+          <div class="wf-img"><span class="wf-tag">video · walkthrough.mp4</span><span class="wf-center">Walkthrough Film</span></div>
+        </div>
+
+        <div class="gal-item size-tall" data-gallery-trigger data-index="4" tabindex="0">
+          <span class="gal-idx">04</span>
+          <span class="gal-kind photo">Photo</span>
+          <div class="wf-img"><span class="wf-tag">img · facade-dusk</span><span class="wf-center">Façade at Dusk</span></div>
+        </div>
+        <div class="gal-item size-wide" data-gallery-trigger data-index="5" tabindex="0">
+          <span class="gal-idx">05</span>
+          <span class="gal-kind photo">Photo</span>
+          <div class="wf-img"><span class="wf-tag">img · sea-elevation</span><span class="wf-center">Sea Elevation</span></div>
+        </div>
+        <div class="gal-item size-m"    data-gallery-trigger data-index="6" tabindex="0">
+          <span class="gal-idx">06</span>
+          <span class="gal-kind plan">Plan</span>
+          <div class="wf-img"><span class="wf-tag">drawing · ground-plan</span><span class="wf-center">Ground Plan</span></div>
+        </div>
+        <div class="gal-item size-m"    data-gallery-trigger data-index="7" tabindex="0">
+          <span class="gal-idx">07</span>
+          <span class="gal-kind photo">Photo</span>
+          <div class="wf-img"><span class="wf-tag">img · bedroom-wing</span><span class="wf-center">Bedroom Wing</span></div>
+        </div>
+
+        <div class="gal-item size-m"    data-gallery-trigger data-index="8" tabindex="0">
+          <span class="gal-idx">08</span>
+          <span class="gal-kind plan">Section</span>
+          <div class="wf-img"><span class="wf-tag">drawing · section-aa</span><span class="wf-center">Section AA</span></div>
+        </div>
+        <div class="gal-item size-m"    data-gallery-trigger data-index="9" tabindex="0">
+          <span class="gal-idx">09</span>
+          <span class="gal-kind photo">Photo</span>
+          <div class="wf-img"><span class="wf-tag">img · kitchen-island</span><span class="wf-center">Kitchen Island</span></div>
+        </div>
+        <div class="gal-item size-m"    data-gallery-trigger data-index="10" tabindex="0">
+          <span class="gal-idx">10</span>
+          <span class="gal-kind video">Film</span>
+          <div class="wf-img"><span class="wf-tag">video · making-of.mp4</span><span class="wf-center">Making Of</span></div>
+        </div>
+
+        <div class="gal-item size-wide" data-gallery-trigger data-index="11" tabindex="0">
+          <span class="gal-idx">11</span>
+          <span class="gal-kind photo">Photo</span>
+          <div class="wf-img"><span class="wf-tag">img · landscape-context</span><span class="wf-center">Landscape Context</span></div>
+        </div>
+        <div class="gal-item size-m"    data-gallery-trigger data-index="12" tabindex="0">
+          <span class="gal-idx">12</span>
+          <span class="gal-kind photo">Photo</span>
+          <div class="wf-img"><span class="wf-tag">img · material-detail</span><span class="wf-center">Material Detail</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NEXT PROJECT ============ -->
+  <section class="next-block" data-screen-label="05 Next Project">
+    <div class="container">
+      <div class="next-inner">
+        <div class="next-media wf-img">
+          <span class="wf-tag">img · next-project</span>
+          <span class="wf-center">Next Project</span>
+        </div>
+        <div class="next-copy">
+          <span class="wf-label">04 / 24 · Next in Architecture</span>
+          <h3>The Sequoia Pavilion</h3>
+          <p style="color:#2a2a2a; max-width: 42ch; font-size: 15px; line-height: 1.7;">A 640 m² cultural pavilion folded into the lakeland edge — timber-clad, slow-lit, and quietly civic.</p>
+          <a class="next-cta" href="#">
+            <span>View next project</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer data-screen-label="06 Footer">
+    <div class="container">
+      <div class="foot-top">
+        <div class="col">
+          <h4>Studio Location</h4>
+          <div class="foot-map" aria-label="Map placeholder">
+            <span class="foot-map-tag">Map · Embed</span>
+            <span class="pin" aria-hidden="true"></span>
+          </div>
+          <p>22 Foundry Lane, Studio 4<br/>Shoreditch, London EC2A 3DB<br/>United Kingdom</p>
+        </div>
+        <div class="col">
+          <h4>Contact</h4>
+          <ul>
+            <li>studio@practicearchitect.co</li>
+            <li>press@practicearchitect.co</li>
+            <li>+44 (0) 20 7946 0911</li>
+            <li>Mon — Fri · 09:00–18:00</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Architecture</a></li>
+            <li><a href="#">Interior</a></li>
+            <li><a href="#">Planning</a></li>
+            <li><a href="#">Landscape</a></li>
+          </ul>
+        </div>
+        <div class="col">
+          <h4>Practice</h4>
+          <div class="foot-logo">
+            <span class="logo-mark" aria-hidden="true"></span>
+            <span class="logo-text">Practice Architect</span>
+          </div>
+          <p style="color:#9a9a9a;">A studio for architecture, interior, planning and landscape. Drawing in black, building in light.</p>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span>© 2026 Practice Architect — All rights reserved.</span>
+        <div class="socials">
+          <a href="#">Instagram</a>
+          <a href="#">Are.na</a>
+          <a href="#">LinkedIn</a>
+          <a href="#">Newsletter</a>
+        </div>
+        <span>Site v1.0 · Wireframe</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============ LIGHTBOX ============ -->
+  <div class="lb" id="lightbox" role="dialog" aria-modal="true" aria-label="Project gallery viewer">
+    <div class="lb-top">
+      <div class="lb-meta">
+        <span><span class="now" id="lbIdx">01</span> / <span id="lbTotal">13</span></span>
+        <span id="lbKind">Photo</span>
+        <span>House on the Cliff</span>
+      </div>
+      <button class="lb-close" id="lbClose" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 5l14 14M19 5L5 19"/></svg>
+      </button>
+    </div>
+
+    <div class="lb-stage" id="lbStage">
+      <button class="lb-arrow prev" id="lbPrev" aria-label="Previous">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div class="lb-media" id="lbMedia">
+        <span class="lb-tag" id="lbTag">img · hero-featured.jpg</span>
+        <div class="wf-img"><span class="wf-center" id="lbTitle">Featured Project Image</span></div>
+      </div>
+      <button class="lb-arrow next" id="lbNext" aria-label="Next">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+    <div class="lb-bottom">
+      <div class="lb-caption" id="lbCaption">
+        Featured Project Image
+        <small id="lbCaptionSub">House on the Cliff · Exterior · 16:9</small>
+      </div>
+      <div class="lb-strip" id="lbStrip" aria-label="Gallery filmstrip"></div>
+    </div>
+  </div>
+
+  <script>
+    // ===== gallery data =====
+    // index 0 reserved for the hero image
+    const MEDIA = [
+      { kind: 'photo', tag: 'img · hero-featured.jpg',  title: 'Featured Project Image', sub: 'House on the Cliff · Exterior · 16:9' },
+      { kind: 'photo', tag: 'img · interior-living',    title: 'Interior Living',         sub: 'Main living space toward the sea' },
+      { kind: 'photo', tag: 'img · stair-detail',       title: 'Stair Detail',            sub: 'Cantilevered oak stair, hand-detailed steel handrail' },
+      { kind: 'video', tag: 'video · walkthrough.mp4',  title: 'Walkthrough Film',        sub: '03:42 · Director · J. Mori' },
+      { kind: 'photo', tag: 'img · facade-dusk',        title: 'Façade at Dusk',          sub: 'West elevation, late summer' },
+      { kind: 'photo', tag: 'img · sea-elevation',      title: 'Sea Elevation',           sub: 'Long view from the bluff' },
+      { kind: 'plan',  tag: 'drawing · ground-plan',    title: 'Ground Plan',             sub: 'Scale 1:200 · GA drawing' },
+      { kind: 'photo', tag: 'img · bedroom-wing',       title: 'Bedroom Wing',            sub: 'Folded back into the slope' },
+      { kind: 'plan',  tag: 'drawing · section-aa',     title: 'Section AA',              sub: 'Through living room, looking north' },
+      { kind: 'photo', tag: 'img · kitchen-island',     title: 'Kitchen Island',          sub: 'Board-formed concrete & cedar joinery' },
+      { kind: 'video', tag: 'video · making-of.mp4',    title: 'Making Of',               sub: '06:18 · Construction film' },
+      { kind: 'photo', tag: 'img · landscape-context',  title: 'Landscape Context',       sub: 'Granite headland, Atlantic edge' },
+      { kind: 'photo', tag: 'img · material-detail',    title: 'Material Detail',         sub: 'Pre-weathered larch & oxidised steel' }
+    ];
+
+    // ===== lightbox =====
+    const lb        = document.getElementById('lightbox');
+    const lbMedia   = document.getElementById('lbMedia');
+    const lbTag     = document.getElementById('lbTag');
+    const lbTitle   = document.getElementById('lbTitle');
+    const lbCaption = document.getElementById('lbCaption');
+    const lbCapSub  = document.getElementById('lbCaptionSub');
+    const lbIdx     = document.getElementById('lbIdx');
+    const lbTotal   = document.getElementById('lbTotal');
+    const lbKind    = document.getElementById('lbKind');
+    const lbStrip   = document.getElementById('lbStrip');
+    const lbStage   = document.getElementById('lbStage');
+
+    lbTotal.textContent = String(MEDIA.length).padStart(2,'0');
+
+    // build filmstrip
+    MEDIA.forEach((m, i) => {
+      const t = document.createElement('button');
+      t.className = 'lb-thumb';
+      t.setAttribute('aria-label', `Item ${i+1} — ${m.title}`);
+      t.dataset.index = i;
+      t.addEventListener('click', () => goTo(i));
+      lbStrip.appendChild(t);
+    });
+    const strips = Array.from(lbStrip.querySelectorAll('.lb-thumb'));
+
+    let current = 0;
+
+    function render(i) {
+      const m = MEDIA[i];
+      lbTag.textContent = m.tag;
+      lbTitle.textContent = m.title;
+      lbCaption.firstChild.textContent = m.title;
+      lbCapSub.textContent = m.sub;
+      lbIdx.textContent = String(i + 1).padStart(2, '0');
+      lbKind.textContent = m.kind === 'video' ? 'Film' : m.kind === 'plan' ? 'Drawing' : 'Photograph';
+      lbMedia.classList.toggle('video', m.kind === 'video');
+      strips.forEach((s, j) => s.classList.toggle('active', j === i));
+      const active = strips[i];
+      if (active) active.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+    }
+
+    function open(i) {
+      current = Math.max(0, Math.min(MEDIA.length - 1, i));
+      lb.classList.add('open');
+      render(current);
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    function goTo(i) {
+      current = (i + MEDIA.length) % MEDIA.length; // infinite loop
+      lbMedia.style.opacity = '0.3';
+      lbMedia.style.transform = 'translateX(8px)';
+      setTimeout(() => {
+        render(current);
+        lbMedia.style.opacity = '';
+        lbMedia.style.transform = '';
+      }, 90);
+    }
+
+    document.querySelectorAll('[data-gallery-trigger]').forEach(el => {
+      const i = parseInt(el.dataset.index, 10);
+      el.addEventListener('click', () => open(i));
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(i); }
+      });
+    });
+
+    document.getElementById('lbPrev').addEventListener('click', () => goTo(current - 1));
+    document.getElementById('lbNext').addEventListener('click', () => goTo(current + 1));
+    document.getElementById('lbClose').addEventListener('click', close);
+    lb.addEventListener('click', e => { if (e.target === lb) close(); });
+
+    // keyboard
+    document.addEventListener('keydown', e => {
+      if (!lb.classList.contains('open')) return;
+      if (e.key === 'ArrowLeft')  goTo(current - 1);
+      if (e.key === 'ArrowRight') goTo(current + 1);
+      if (e.key === 'Escape')     close();
+    });
+
+    // swipe / drag
+    let touchStartX = null;
+    lbStage.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    lbStage.addEventListener('touchend',   e => {
+      if (touchStartX == null) return;
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 50) goTo(current + (dx < 0 ? 1 : -1));
+      touchStartX = null;
+    });
+    // mouse drag
+    let mouseStartX = null;
+    lbStage.addEventListener('mousedown', e => { mouseStartX = e.clientX; });
+    lbStage.addEventListener('mouseup',   e => {
+      if (mouseStartX == null) return;
+      const dx = e.clientX - mouseStartX;
+      if (Math.abs(dx) > 60) goTo(current + (dx < 0 ? 1 : -1));
+      mouseStartX = null;
+    });
+  </script>
+</body>
+</html>

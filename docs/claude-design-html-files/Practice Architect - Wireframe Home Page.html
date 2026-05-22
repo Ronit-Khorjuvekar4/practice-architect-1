@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Practice Architect — Homepage Wireframe</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root {
+    --ink: #111;
+    --line: #c9c9c9;
+    --line-strong: #1a1a1a;
+    --muted: #6b6b6b;
+    --paper: #fafafa;
+    --placeholder: #ececec;
+    --placeholder-2: #e2e2e2;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--paper); color: var(--ink); }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ------- wireframe primitives ------- */
+  .wf-label {
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .wf-tag {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: #fff;
+    border: 1px solid var(--line);
+    padding: 2px 6px;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .wf-img {
+    position: relative;
+    background:
+      linear-gradient(135deg, transparent calc(50% - 0.5px), var(--line) calc(50% - 0.5px), var(--line) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      linear-gradient(45deg, transparent calc(50% - 0.5px), var(--line) calc(50% - 0.5px), var(--line) calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      var(--placeholder);
+    border: 1px solid var(--line-strong);
+  }
+  .wf-img .wf-center {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #333;
+    background: rgba(255,255,255,0.78);
+    padding: 6px 12px;
+    width: max-content; height: max-content;
+    margin: auto;
+    border: 1px solid var(--line-strong);
+  }
+  .wf-text {
+    background: repeating-linear-gradient(
+      to bottom,
+      #2b2b2b 0 8px,
+      transparent 8px 16px
+    );
+    width: 100%;
+    height: 16px;
+    opacity: 0.78;
+  }
+  .wf-text.short { width: 60%; }
+  .wf-text.tiny  { width: 35%; }
+
+  .container {
+    max-width: 1360px;
+    margin: 0 auto;
+    padding: 0 56px;
+  }
+
+  /* ------- navbar ------- */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: #fff;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 76px;
+  }
+  .logo {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .logo-mark {
+    width: 28px; height: 28px;
+    border: 1.5px solid var(--ink);
+    display: inline-block;
+    transform: rotate(45deg);
+    position: relative;
+  }
+  .logo-mark::after {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1px solid var(--ink);
+  }
+  .logo-text {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 18px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+  .nav-links {
+    display: flex;
+    gap: 40px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+  }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding-bottom: 4px;
+    border-bottom: 1px solid transparent;
+  }
+  .nav-links a.active,
+  .nav-links a:hover { border-bottom-color: var(--ink); }
+
+  /* annotation rail */
+  .anno {
+    border-top: 1px dashed var(--line);
+    border-bottom: 1px dashed var(--line);
+    background: #fff;
+  }
+  .anno-inner {
+    display: flex; justify-content: space-between; align-items: center;
+    height: 28px;
+  }
+  .anno .wf-label { color: var(--muted); }
+
+  /* ------- hero ------- */
+  .hero {
+    padding: 88px 0 96px;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 80px;
+    align-items: stretch;
+  }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 520px;
+  }
+  .hero-logo-big {
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .hero-logo-mark {
+    width: 96px; height: 96px;
+    border: 2px solid var(--ink);
+    position: relative;
+    transform: rotate(45deg);
+  }
+  .hero-logo-mark::before {
+    content: ""; position: absolute; inset: 12px;
+    border: 1.5px solid var(--ink);
+  }
+  .hero-logo-mark::after {
+    content: ""; position: absolute; inset: 28px;
+    background: var(--ink);
+  }
+  .hero-title {
+    font-family: "Times New Roman", Times, serif;
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+  .hero-title .thin {
+    font-style: italic;
+    font-weight: 300;
+    color: #2a2a2a;
+  }
+  .hero-eyebrow {
+    margin-bottom: 24px;
+  }
+  .hero-copy {
+    max-width: 480px;
+    display: flex; flex-direction: column; gap: 10px;
+    margin-top: 28px;
+  }
+  .hero-meta {
+    display: flex; gap: 56px;
+    margin-top: 40px;
+    border-top: 1px solid var(--line-strong);
+    padding-top: 20px;
+  }
+  .hero-meta div { display: flex; flex-direction: column; gap: 8px; }
+  .hero-meta .v {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 22px;
+  }
+  .hero-cta {
+    margin-top: 36px;
+    display: inline-flex; align-items: center; gap: 12px;
+    border: 1px solid var(--ink);
+    padding: 14px 22px;
+    width: max-content;
+    font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .hero-cta .arrow { width: 24px; height: 1px; background: var(--ink); position: relative; }
+  .hero-cta .arrow::after {
+    content: ""; position: absolute; right: 0; top: -3px;
+    width: 7px; height: 7px;
+    border-top: 1px solid var(--ink); border-right: 1px solid var(--ink);
+    transform: rotate(45deg);
+  }
+
+  .hero-right { position: relative; }
+  .hero-right .wf-img { width: 100%; height: 100%; min-height: 560px; }
+  .hero-caption {
+    position: absolute; bottom: 16px; left: 16px; right: 16px;
+    display: flex; justify-content: space-between;
+    background: #fff; border: 1px solid var(--line);
+    padding: 10px 14px;
+  }
+
+  /* ------- section heading ------- */
+  .section {
+    padding: 96px 0;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    margin-bottom: 48px;
+    gap: 24px;
+  }
+  .section-title {
+    font-family: "Times New Roman", Times, serif;
+    font-weight: 400;
+    font-size: 44px;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .section-num {
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: block;
+  }
+  .section-sub {
+    max-width: 420px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  /* ------- projects grid ------- */
+  .projects {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .project-card {
+    border: 1px solid var(--line-strong);
+    background: #fff;
+    display: flex; flex-direction: column;
+  }
+  .project-card .wf-img {
+    aspect-ratio: 3 / 4;
+    border: none;
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .project-body {
+    padding: 18px 18px 20px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .project-row {
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .project-name {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 22px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .project-index {
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .project-card .wf-text { opacity: 0.55; }
+
+  /* ------- achievements carousel ------- */
+  .ach-frame {
+    position: relative;
+    border: 1px solid var(--line-strong);
+    background: #fff;
+    padding: 32px;
+  }
+  .ach-track {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .ach-card {
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .ach-card .wf-img { aspect-ratio: 4 / 5; }
+  .ach-meta {
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .ach-name {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 18px;
+  }
+  .ach-year {
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .ach-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 28px;
+    border-top: 1px dashed var(--line);
+    padding-top: 20px;
+  }
+  .ach-dots { display: flex; gap: 8px; }
+  .ach-dot {
+    width: 24px; height: 2px; background: var(--line);
+  }
+  .ach-dot.active { background: var(--ink); }
+  .ach-arrows { display: flex; gap: 12px; }
+  .ach-btn {
+    width: 44px; height: 44px;
+    border: 1px solid var(--ink);
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+  }
+  .ach-btn:hover { background: var(--ink); color: #fff; }
+  .ach-btn svg { width: 16px; height: 16px; }
+  .ach-counter {
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+  }
+
+  /* ------- competition ------- */
+  .comp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 80px;
+    border-top: 1px solid var(--ink);
+  }
+  .comp-row {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    align-items: baseline;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--line);
+    gap: 16px;
+  }
+  .comp-idx {
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 11px; color: var(--muted);
+  }
+  .comp-name {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 20px;
+  }
+  .comp-year {
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* ------- footer ------- */
+  footer { background: #0d0d0d; color: #ededed; }
+  .foot-top {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 56px;
+    padding: 80px 0 64px;
+  }
+  .foot-top .col h4 {
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #9a9a9a;
+    margin: 0 0 18px;
+    font-weight: 500;
+  }
+  .foot-top a, .foot-top p {
+    color: #ededed;
+    text-decoration: none;
+    font-size: 13px;
+    line-height: 1.8;
+    margin: 0;
+  }
+  .foot-top ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .foot-map {
+    width: 100%;
+    height: 240px;
+    border: 1px solid #2b2b2b;
+    background:
+      linear-gradient(135deg, transparent calc(50% - 0.5px), #2b2b2b calc(50% - 0.5px), #2b2b2b calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      linear-gradient(45deg, transparent calc(50% - 0.5px), #2b2b2b calc(50% - 0.5px), #2b2b2b calc(50% + 0.5px), transparent calc(50% + 0.5px)),
+      repeating-linear-gradient(0deg, #141414 0 24px, #181818 24px 48px),
+      #141414;
+    position: relative;
+    margin-bottom: 18px;
+  }
+  .foot-map .pin {
+    position: absolute; top: 48%; left: 42%;
+    width: 14px; height: 14px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(255,255,255,0.15);
+  }
+  .foot-map .pin::after {
+    content: ""; position: absolute; left: 50%; top: 100%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: #fff;
+  }
+  .foot-map-tag {
+    position: absolute; top: 12px; left: 12px;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: #9a9a9a;
+    border: 1px solid #2b2b2b; padding: 3px 7px;
+    background: #0d0d0d;
+  }
+  .foot-logo {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 18px;
+  }
+  .foot-logo .logo-mark { border-color: #fff; }
+  .foot-logo .logo-mark::after { border-color: #fff; }
+  .foot-logo .logo-text { color: #fff; }
+  .foot-bottom {
+    border-top: 1px solid #1f1f1f;
+    padding: 22px 0;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: #7d7d7d;
+    letter-spacing: 0.08em;
+  }
+  .foot-bottom a { color: #7d7d7d; text-decoration: none; }
+  .foot-bottom .socials { display: flex; gap: 22px; }
+
+  /* annotation pills for wireframe vibe */
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px dashed var(--muted);
+    padding: 3px 8px;
+    font-family: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted);
+    background: #fff;
+  }
+  .pill::before {
+    content: ""; width: 6px; height: 6px; background: var(--ink); border-radius: 50%;
+  }
+
+  @media (max-width: 1000px) {
+    .container { padding: 0 24px; }
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .projects, .ach-track { grid-template-columns: repeat(2, 1fr); }
+    .comp-grid { grid-template-columns: 1fr; gap: 0; }
+    .foot-top { grid-template-columns: 1fr 1fr; }
+    .hero-title { font-size: 44px; }
+    .section-title { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" data-screen-label="01 Navbar">
+    <div class="container nav-inner">
+      <a href="#" class="logo" aria-label="Practice Architect">
+        <span class="logo-mark" aria-hidden="true"></span>
+        <span class="logo-text">Practice Architect</span>
+      </a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#home" class="active">Home</a></li>
+          <li><a href="#architecture">Architecture</a></li>
+          <li><a href="#interior">Interior</a></li>
+          <li><a href="#planning">Planning</a></li>
+          <li><a href="#landscape">Landscape</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- wireframe annotation -->
+  <div class="anno">
+    <div class="container anno-inner">
+      <span class="wf-label">Section 01 — Sticky Navbar · 76px · Border-bottom 1px</span>
+      <span class="wf-label">Wireframe · Practice Architect · Homepage v1</span>
+    </div>
+  </div>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="home" data-screen-label="02 Hero">
+    <div class="container hero-grid">
+      <div class="hero-left">
+        <div>
+          <span class="hero-eyebrow wf-label">02 / Hero — Practice Overview</span>
+          <div class="hero-logo-big">
+            <span class="hero-logo-mark" aria-hidden="true"></span>
+            <h1 class="hero-title">Practice<br/><span class="thin">Architect</span></h1>
+          </div>
+          <div class="hero-copy">
+            <p style="margin:0;max-width:46ch;color:#2a2a2a;font-size:15px;line-height:1.7;">
+              A multidisciplinary studio working across architecture, interiors, planning and landscape — building considered, site-specific environments with a quiet rigor.
+            </p>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:18px;">
+              <div class="wf-text"></div>
+              <div class="wf-text"></div>
+              <div class="wf-text short"></div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="hero-meta">
+            <div>
+              <span class="wf-label">Founded</span>
+              <span class="v">2008</span>
+            </div>
+            <div>
+              <span class="wf-label">Projects</span>
+              <span class="v">142</span>
+            </div>
+            <div>
+              <span class="wf-label">Studios</span>
+              <span class="v">02</span>
+            </div>
+          </div>
+          <a class="hero-cta" href="#projects">
+            <span>Explore the practice</span>
+            <span class="arrow" aria-hidden="true"></span>
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="wf-img">
+          <span class="wf-tag">img · architect-portrait.jpg</span>
+          <span class="wf-center">Portrait of the Architect</span>
+        </div>
+        <div class="hero-caption">
+          <span class="wf-label">Principal · Founding Architect</span>
+          <span class="wf-label">4:5 · Black &amp; White</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PROJECTS ============ -->
+  <section class="section" id="projects" data-screen-label="03 Projects">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="section-num">03 / Disciplines</span>
+          <h2 class="section-title">Selected Practice</h2>
+        </div>
+        <p class="section-sub">
+          Four entry points into the studio's portfolio. Each card opens its own collection of built and unbuilt work.
+        </p>
+      </div>
+
+      <div class="projects">
+        <article class="project-card">
+          <div class="wf-img">
+            <span class="wf-tag">img · architecture-cover</span>
+            <span class="wf-center">Architecture</span>
+          </div>
+          <div class="project-body">
+            <div class="project-row">
+              <span class="project-name">Architecture</span>
+              <span class="project-index">01</span>
+            </div>
+            <div class="wf-text tiny"></div>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <div class="wf-img">
+            <span class="wf-tag">img · interior-cover</span>
+            <span class="wf-center">Interior</span>
+          </div>
+          <div class="project-body">
+            <div class="project-row">
+              <span class="project-name">Interior</span>
+              <span class="project-index">02</span>
+            </div>
+            <div class="wf-text tiny"></div>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <div class="wf-img">
+            <span class="wf-tag">img · planning-cover</span>
+            <span class="wf-center">Planning</span>
+          </div>
+          <div class="project-body">
+            <div class="project-row">
+              <span class="project-name">Planning</span>
+              <span class="project-index">03</span>
+            </div>
+            <div class="wf-text tiny"></div>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <div class="wf-img">
+            <span class="wf-tag">img · landscape-cover</span>
+            <span class="wf-center">Landscape</span>
+          </div>
+          <div class="project-body">
+            <div class="project-row">
+              <span class="project-name">Landscape</span>
+              <span class="project-index">04</span>
+            </div>
+            <div class="wf-text tiny"></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ACHIEVEMENTS ============ -->
+  <section class="section" id="achievements" data-screen-label="04 Achievements">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="section-num">04 / Recognitions</span>
+          <h2 class="section-title">Achievements</h2>
+        </div>
+        <p class="section-sub">
+          An infinite-loop carousel of awards, fellowships and publications. Slides advance on arrow click and on a 6-second auto-rotation.
+        </p>
+      </div>
+
+      <div class="ach-frame">
+        <span class="pill" style="position:absolute;top:-12px;left:24px;">Component · Carousel · Infinite</span>
+
+        <div class="ach-track" id="achTrack">
+          <article class="ach-card">
+            <div class="wf-img"><span class="wf-tag">img · award-01</span><span class="wf-center">Achievement</span></div>
+            <div class="ach-meta"><span class="ach-name">Royal Gold Medal</span><span class="ach-year">2024</span></div>
+          </article>
+          <article class="ach-card">
+            <div class="wf-img"><span class="wf-tag">img · award-02</span><span class="wf-center">Achievement</span></div>
+            <div class="ach-meta"><span class="ach-name">Architect of the Year</span><span class="ach-year">2023</span></div>
+          </article>
+          <article class="ach-card">
+            <div class="wf-img"><span class="wf-tag">img · award-03</span><span class="wf-center">Achievement</span></div>
+            <div class="ach-meta"><span class="ach-name">AJ100 Practice</span><span class="ach-year">2022</span></div>
+          </article>
+          <article class="ach-card">
+            <div class="wf-img"><span class="wf-tag">img · award-04</span><span class="wf-center">Achievement</span></div>
+            <div class="ach-meta"><span class="ach-name">Civic Trust Award</span><span class="ach-year">2021</span></div>
+          </article>
+        </div>
+
+        <div class="ach-controls">
+          <span class="ach-counter">01 — 04 of 12</span>
+          <div class="ach-dots">
+            <span class="ach-dot active"></span>
+            <span class="ach-dot"></span>
+            <span class="ach-dot"></span>
+          </div>
+          <div class="ach-arrows">
+            <button class="ach-btn" id="achPrev" aria-label="Previous">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 5l-7 7 7 7"/></svg>
+            </button>
+            <button class="ach-btn" id="achNext" aria-label="Next">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ COMPETITION ============ -->
+  <section class="section" id="competition" data-screen-label="05 Competition">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="section-num">05 / Submissions</span>
+          <h2 class="section-title">Competitions</h2>
+        </div>
+        <p class="section-sub">
+          Open, invited and international competition entries from the studio's archive — listed in two columns by year.
+        </p>
+      </div>
+
+      <div class="comp-grid">
+        <div>
+          <div class="comp-row"><span class="comp-idx">01</span><span class="comp-name">Helsinki Library Pavilion</span><span class="comp-year">2025</span></div>
+          <div class="comp-row"><span class="comp-idx">02</span><span class="comp-name">Riverbank Memorial Garden</span><span class="comp-year">2024</span></div>
+          <div class="comp-row"><span class="comp-idx">03</span><span class="comp-name">Civic Square Reimagined</span><span class="comp-year">2024</span></div>
+          <div class="comp-row"><span class="comp-idx">04</span><span class="comp-name">Tsukiji Cultural Center</span><span class="comp-year">2023</span></div>
+          <div class="comp-row"><span class="comp-idx">05</span><span class="comp-name">Coastal Research Station</span><span class="comp-year">2022</span></div>
+          <div class="comp-row" style="border-bottom:none;"><span class="comp-idx">06</span><span class="comp-name">Highland Visitor Lodge</span><span class="comp-year">2022</span></div>
+        </div>
+        <div>
+          <div class="comp-row"><span class="comp-idx">07</span><span class="comp-name">Porto Waterfront Masterplan</span><span class="comp-year">2021</span></div>
+          <div class="comp-row"><span class="comp-idx">08</span><span class="comp-name">Atelier on the Hill</span><span class="comp-year">2020</span></div>
+          <div class="comp-row"><span class="comp-idx">09</span><span class="comp-name">Iceland Aurora Observatory</span><span class="comp-year">2020</span></div>
+          <div class="comp-row"><span class="comp-idx">10</span><span class="comp-name">New Town Hall, Oslo</span><span class="comp-year">2019</span></div>
+          <div class="comp-row"><span class="comp-idx">11</span><span class="comp-name">Forest Chapel Reconstruction</span><span class="comp-year">2018</span></div>
+          <div class="comp-row" style="border-bottom:none;"><span class="comp-idx">12</span><span class="comp-name">Marrakech Artist Residency</span><span class="comp-year">2017</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer data-screen-label="06 Footer">
+    <div class="container">
+      <div class="foot-top">
+        <!-- Map column -->
+        <div class="col">
+          <h4>Studio Location</h4>
+          <div class="foot-map" aria-label="Map placeholder">
+            <span class="foot-map-tag">Map · Embed</span>
+            <span class="pin" aria-hidden="true"></span>
+          </div>
+          <p>22 Foundry Lane, Studio 4<br/>Shoreditch, London EC2A 3DB<br/>United Kingdom</p>
+        </div>
+
+        <!-- Contact -->
+        <div class="col">
+          <h4>Contact</h4>
+          <ul>
+            <li>studio@practicearchitect.co</li>
+            <li>press@practicearchitect.co</li>
+            <li>+44 (0) 20 7946 0911</li>
+            <li>Mon — Fri · 09:00–18:00</li>
+          </ul>
+        </div>
+
+        <!-- Page nav -->
+        <div class="col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#interior">Interior</a></li>
+            <li><a href="#planning">Planning</a></li>
+            <li><a href="#landscape">Landscape</a></li>
+          </ul>
+        </div>
+
+        <!-- Logo + tagline -->
+        <div class="col">
+          <h4>Practice</h4>
+          <div class="foot-logo">
+            <span class="logo-mark" aria-hidden="true"></span>
+            <span class="logo-text">Practice Architect</span>
+          </div>
+          <p style="color:#9a9a9a;">A studio for architecture, interior, planning and landscape. Drawing in black, building in light.</p>
+        </div>
+      </div>
+
+      <div class="foot-bottom">
+        <span>© 2026 Practice Architect — All rights reserved.</span>
+        <div class="socials">
+          <a href="#">Instagram</a>
+          <a href="#">Are.na</a>
+          <a href="#">LinkedIn</a>
+          <a href="#">Newsletter</a>
+        </div>
+        <span>Site v1.0 · Wireframe</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Infinite-loop carousel logic for achievements
+    (function(){
+      const track = document.getElementById('achTrack');
+      const prev = document.getElementById('achPrev');
+      const next = document.getElementById('achNext');
+      if (!track) return;
+      function rotate(dir){
+        const cards = Array.from(track.children);
+        if (dir === 1) track.appendChild(cards[0]);
+        else track.insertBefore(cards[cards.length-1], cards[0]);
+        track.animate(
+          [{opacity: 0.3, transform: 'translateX(' + (dir===1?'20px':'-20px') + ')'},
+           {opacity: 1, transform: 'translateX(0)'}],
+          {duration: 280, easing: 'ease-out'}
+        );
+      }
+      prev.addEventListener('click', () => rotate(-1));
+      next.addEventListener('click', () => rotate(1));
+    })();
+  </script>
+</body>
+</html>
