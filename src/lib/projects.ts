@@ -1,184 +1,231 @@
-import type { Project } from "@/types/project";
+import type {
+  CategorySlug,
+  Project,
+  ProjectSeo,
+  ProjectStatus,
+} from "@/types/project";
+import type {
+  StrapiCollectionResponse,
+  StrapiProject,
+  StrapiSeo,
+} from "@/types/strapi";
+import {
+  fetchStrapiData,
+  getStrapiMediaUrl,
+  logStrapiError,
+  type StrapiQuery,
+} from "@/lib/strapi";
+import { normalizeCoverImage, normalizeStrapiMedia } from "@/lib/media";
 
 /**
- * Sample project data — at least two projects per category so the listing
- * and detail pages can be built and tested in later phases.
+ * ── Strapi `project` schema (verified against the live API) ─────────────
  *
- * Each project carries a `media` array of images and/or videos. Image paths
- * point to the monochrome SVG placeholders in `/public/placeholder` (and a
- * few first-party PNGs); video items would add `type: "video"` with an
- * optional `thumbnail` poster.
+ * Collection `project` (API ID plural: `projects`)
+ *   - title            Text
+ *   - slug             UID
+ *   - year             Text             → mapped to Project.dateOfCompletion
+ *   - project_status   Enumeration      (e.g. "completed", "in progress")
+ *   - practice_category Relation        → practice-category
+ *   - coverImage       Media (single)
+ *   - project_media    Repeatable component:
+ *       { type: enum, title, alt, src: Media, src_thumbnail: Media }
+ *
+ * The frontend `Project` type also carries `shortDescription`, `description`,
+ * `location`, `area`, `projectType` and `seo`. These do NOT yet exist on the
+ * Strapi content type — the normalizer defaults them gracefully. When you add
+ * them in Strapi they flow through automatically (this file fetches all
+ * scalar fields; see `listingQuery`). For `seo`, also un-comment the populate
+ * line in `DETAIL_POPULATE`.
+ *
+ * IMPORTANT:
+ *   - Strapi's public role (or the API token) must allow `find` + `findOne`
+ *     on `project` and `practice-category`.
+ *   - Requesting `fields`/`populate` for an attribute that does NOT exist
+ *     makes Strapi return HTTP 400. Only reference fields that exist.
+ * ────────────────────────────────────────────────────────────────────────
  */
-export const projects: Project[] = [
-  // ---------- Architecture ----------
-  {
-    title: "House on the Cliff",
-    slug: "house-on-the-cliff",
-    category: "architecture",
-    shortDescription:
-      "A timber and concrete residence perched on a granite headland.",
-    description:
-      "A long, low house that sits lightly against the cliff edge and frames the Atlantic without competing with it. The plan is a single linear bar splayed along the contour, with bedroom wings folded back into the slope and living spaces cantilevered toward the sea. Board-formed concrete holds its cool grey light against warm cedar joinery and brushed oak floors.",
-    location: "Cornwall, United Kingdom",
-    area: "480 m²",
-    dateOfCompletion: "2024",
-    status: "Completed",
-    media: [
-      { type: "image", src: "/Residential.png", alt: "House on the Cliff project image" },
-      { type: "image", src: "/Residential.png", alt: "House on the Cliff project image" },
-      { type: "image", src: "/Residential.png", alt: "House on the Cliff project image" },
-      { type: "image", src: "/Residential.png", alt: "House on the Cliff project image" },
-      {
-        type: "video",
-        src: "/ok.mp4",
-        thumbnail: "/Residential.png",
-        title: "House on the Cliff project video",
-        alt: "House on the Cliff project video thumbnail",
-      }
-    ],
-  },
-  {
-    title: "The Sequoia Pavilion",
-    slug: "the-sequoia-pavilion",
-    category: "architecture",
-    shortDescription: "A cultural pavilion folded into the lakeland edge.",
-    description:
-      "A 640 m² cultural pavilion folded into the lakeland edge — timber-clad, slow-lit and quietly civic. The roof steps with the terrain so the building reads as landscape before it reads as architecture, and a continuous clerestory traces daylight across the exhibition spine.",
-    location: "Lake District, United Kingdom",
-    area: "640 m²",
-    dateOfCompletion: "2025",
-    status: "In Progress",
-    media: [
-      { type: "image", src: "/INTERIOR.png", alt: "The Sequoia Pavilion project image" },
-      { type: "image", src: "/INTERIOR.png", alt: "The Sequoia Pavilion project image" },
-      { type: "image", src: "/INTERIOR.png", alt: "The Sequoia Pavilion project image" },
-    ],
-  },
+const PROJECTS_ENDPOINT = "/projects";
 
-  // ---------- Interior ----------
-  {
-    title: "The Reading Room",
-    slug: "the-reading-room",
-    category: "interior",
-    shortDescription: "A private library interior in oak, plaster and shadow.",
-    description:
-      "An interior commission that treats a single room as a quiet instrument for light. Full-height oak shelving wraps three walls, lime plaster softens the fourth, and a recessed cornice washes the ceiling so the room reads as atmosphere rather than decoration.",
-    location: "Edinburgh, United Kingdom",
-    area: "120 m²",
-    dateOfCompletion: "2023",
-    status: "Completed",
-    media: [
-      { type: "image", src: "/placeholder/02.svg", alt: "The Reading Room project image" },
-      { type: "image", src: "/placeholder/03.svg", alt: "The Reading Room project image" },
-      { type: "image", src: "/placeholder/04.svg", alt: "The Reading Room project image" },
-    ],
-  },
-  {
-    title: "Quarry House Interior",
-    slug: "quarry-house-interior",
-    category: "interior",
-    shortDescription:
-      "A material-led renovation of a former stone merchant's house.",
-    description:
-      "The interior of a former stone merchant's house, reworked around a tight palette of pale render, blackened steel and reclaimed flagstone. Partitions were removed to return the ground floor to a single connected volume, with joinery detailed to read as furniture rather than fit-out.",
-    location: "Bath, United Kingdom",
-    area: "210 m²",
-    dateOfCompletion: "2025",
-    status: "In Progress",
-    media: [
-      { type: "image", src: "/placeholder/06.svg", alt: "Quarry House Interior project image" },
-      { type: "image", src: "/placeholder/05.svg", alt: "Quarry House Interior project image" },
-      { type: "image", src: "/placeholder/01.svg", alt: "Quarry House Interior project image" },
-    ],
-  },
+/**
+ * Lean populate for listings. No `fields` filter on the project itself —
+ * Strapi returns every scalar by default, so newly-added fields (location,
+ * shortDescription, …) appear with no code change here.
+ */
+const LIST_POPULATE = {
+  practice_category: { fields: ["title", "slug"] },
+  coverImage: { fields: ["url", "alternativeText", "width", "height"] },
+};
 
-  // ---------- Planning ----------
-  {
-    title: "Riverside District Masterplan",
-    slug: "riverside-district-masterplan",
-    category: "planning",
-    shortDescription:
-      "A neighbourhood-scale framework for a former industrial waterfront.",
-    description:
-      "A masterplan that knits a disused industrial waterfront back into the city grid. The framework sets block sizes, street hierarchy and public-realm rules while leaving individual plots open to a range of architects, prioritising walkable distances and a continuous river edge.",
-    location: "Porto, Portugal",
-    area: "18 hectares",
-    dateOfCompletion: "2024",
-    status: "Completed",
-    media: [
-      { type: "image", src: "/placeholder/03.svg", alt: "Riverside District Masterplan project image" },
-      { type: "image", src: "/placeholder/01.svg", alt: "Riverside District Masterplan project image" },
-      { type: "image", src: "/placeholder/05.svg", alt: "Riverside District Masterplan project image" },
-    ],
-  },
-  {
-    title: "Old Town Renewal Framework",
-    slug: "old-town-renewal-framework",
-    category: "planning",
-    shortDescription:
-      "A feasibility study for the gradual renewal of a historic centre.",
-    description:
-      "A phased renewal framework for a historic town centre, balancing heritage constraints against the need for new housing and civic space. The study maps every plot by condition and value, then proposes a sequence of small, fundable interventions rather than a single redevelopment.",
-    location: "Oslo, Norway",
-    area: "26 hectares",
-    dateOfCompletion: "2026",
-    status: "In Progress",
-    media: [
-      { type: "image", src: "/placeholder/04.svg", alt: "Old Town Renewal Framework project image" },
-      { type: "image", src: "/placeholder/02.svg", alt: "Old Town Renewal Framework project image" },
-      { type: "image", src: "/placeholder/06.svg", alt: "Old Town Renewal Framework project image" },
-    ],
-  },
+/** Full populate for a single project detail page. */
+const DETAIL_POPULATE = {
+  practice_category: { fields: ["title", "slug", "description"] },
+  coverImage: true,
+  project_media: { populate: { src: true, src_thumbnail: true } },
+  // Add once a `seo` component exists on the Project type:
+  // seo: { populate: { metaImage: true } },
+};
 
-  // ---------- Landscape ----------
-  {
-    title: "Headland Garden",
-    slug: "headland-garden",
-    category: "landscape",
-    shortDescription: "A windswept coastal garden read first as terrain.",
-    description:
-      "A coastal garden designed for a granite headland, where planting is chosen for its response to salt and wind rather than for display. Drystone terraces follow the existing contour, and a single mown path draws visitors from the house to the cliff edge.",
-    location: "Cornwall, United Kingdom",
-    area: "1.2 hectares",
-    dateOfCompletion: "2023",
-    status: "Completed",
-    media: [
-      { type: "image", src: "/placeholder/05.svg", alt: "Headland Garden project image" },
-      { type: "image", src: "/placeholder/04.svg", alt: "Headland Garden project image" },
-      { type: "image", src: "/placeholder/03.svg", alt: "Headland Garden project image" },
-    ],
-  },
-  {
-    title: "Civic Square Landscape",
-    slug: "civic-square-landscape",
-    category: "landscape",
-    shortDescription:
-      "A public-realm scheme returning a car park to civic ground.",
-    description:
-      "A public-realm scheme that converts a central car park back into civic ground. A single continuous stone surface unifies the space, level changes are resolved as generous seating steps, and a grid of semi-mature trees gives the square shade and structure from its first season.",
-    location: "Helsinki, Finland",
-    area: "0.8 hectares",
-    dateOfCompletion: "2025",
-    status: "In Progress",
-    media: [
-      { type: "image", src: "/placeholder/01.svg", alt: "Civic Square Landscape project image" },
-      { type: "image", src: "/placeholder/06.svg", alt: "Civic Square Landscape project image" },
-      { type: "image", src: "/placeholder/02.svg", alt: "Civic Square Landscape project image" },
-    ],
-  },
-];
+/* ── Normalizers ───────────────────────────────────────────────────────── */
 
-/** All projects belonging to a given category slug. */
-export function getProjectsByCategory(category: string): Project[] {
-  return projects.filter((project) => project.category === category);
+/** Maps a Strapi `project_status` value onto the frontend status union. */
+function normalizeStatus(value: StrapiProject["project_status"]): ProjectStatus {
+  const text = String(value ?? "").toLowerCase();
+  if (text.includes("progress") || text.includes("ongoing")) {
+    return "In Progress";
+  }
+  // "completed", unknown values, and empties all settle on "Completed".
+  return "Completed";
 }
 
-/** A single project matched by both its category and slug. */
-export function getProject(
-  category: string,
-  slug: string,
-): Project | undefined {
-  return projects.find(
-    (project) => project.category === category && project.slug === slug,
-  );
+/** Maps a Strapi `shared.seo` component onto the frontend `ProjectSeo`. */
+function normalizeSeo(
+  seo: StrapiSeo | null | undefined,
+): ProjectSeo | undefined {
+  if (!seo) return undefined;
+  return {
+    title: seo.metaTitle ?? undefined,
+    description: seo.metaDescription ?? undefined,
+    canonicalUrl: seo.canonicalURL ?? undefined,
+    ogImage: seo.metaImage?.url
+      ? getStrapiMediaUrl(seo.metaImage.url)
+      : undefined,
+  };
+}
+
+/**
+ * Maps a raw Strapi project onto the frontend `Project`. Tolerates partial
+ * data: a listing query (no `project_media`) yields `media` containing just
+ * the cover; a detail query yields cover + full gallery.
+ */
+export function normalizeProject(entry: StrapiProject): Project {
+  const category = entry.practice_category ?? null;
+
+  const cover = normalizeCoverImage(entry.coverImage);
+  const gallery = (entry.project_media ?? [])
+    .map(normalizeStrapiMedia)
+    .filter((item): item is NonNullable<typeof item> => item !== null);
+
+  // Cover leads the gallery so `getProjectCover` and the hero pick it first.
+  const media = cover ? [cover, ...gallery] : gallery;
+
+  return {
+    documentId: entry.documentId,
+    title: entry.title,
+    slug: entry.slug,
+    // The slug is validated against the route in the page component.
+    category: (category?.slug ?? "architecture") as CategorySlug,
+    categoryLabel: category?.label ?? category?.title ?? undefined,
+    shortDescription: entry.shortDescription ?? "",
+    description: entry.description ?? "",
+    location: entry.location ?? "",
+    area: entry.area ?? "",
+    dateOfCompletion: entry.year != null ? String(entry.year) : "",
+    status: normalizeStatus(entry.project_status),
+    projectType: entry.projectType ?? undefined,
+    media,
+    seo: normalizeSeo(entry.seo),
+  };
+}
+
+/* ── Shared query helper ───────────────────────────────────────────────── */
+
+/** Builds a listing query, optionally merging extra filters. */
+function listingQuery(extra: StrapiQuery = {}): StrapiQuery {
+  return {
+    populate: LIST_POPULATE,
+    sort: ["year:desc"],
+    pagination: { pageSize: 100 },
+    ...extra,
+  };
+}
+
+/* ── Data functions ────────────────────────────────────────────────────── */
+
+/** Every project, newest first. Returns `[]` if Strapi is unreachable. */
+export async function getProjects(): Promise<Project[]> {
+  try {
+    const res = await fetchStrapiData<StrapiCollectionResponse<StrapiProject>>(
+      PROJECTS_ENDPOINT,
+      { query: listingQuery(), tags: ["projects"] },
+    );
+    return res.data.map(normalizeProject);
+  } catch (error) {
+    logStrapiError("getProjects", error);
+    return [];
+  }
+}
+
+/** Projects belonging to a category, by category slug. */
+export async function getProjectsByCategory(
+  categorySlug: string,
+): Promise<Project[]> {
+  try {
+    const res = await fetchStrapiData<StrapiCollectionResponse<StrapiProject>>(
+      PROJECTS_ENDPOINT,
+      {
+        query: listingQuery({
+          filters: { practice_category: { slug: { $eq: categorySlug } } },
+        }),
+        tags: ["projects", `category:${categorySlug}`],
+      },
+    );
+    return res.data.map(normalizeProject);
+  } catch (error) {
+    logStrapiError(`getProjectsByCategory(${categorySlug})`, error);
+    return [];
+  }
+}
+
+/** A single fully-populated project by slug, or `null` if not found. */
+export async function getProjectBySlug(slug: string): Promise<Project | null> {
+  try {
+    const res = await fetchStrapiData<StrapiCollectionResponse<StrapiProject>>(
+      PROJECTS_ENDPOINT,
+      {
+        query: {
+          filters: { slug: { $eq: slug } },
+          populate: DETAIL_POPULATE,
+          pagination: { pageSize: 1 },
+        },
+        tags: ["projects", `project:${slug}`],
+      },
+    );
+    const entry = res.data[0];
+    return entry ? normalizeProject(entry) : null;
+  } catch (error) {
+    logStrapiError(`getProjectBySlug(${slug})`, error);
+    return null;
+  }
+}
+
+/**
+ * `{ category, slug }` pairs for every project — feeds `generateStaticParams`
+ * on `/[category]/[slug]`. Returns `[]` on failure so the build never breaks;
+ * unknown routes then render on-demand (ISR) instead of being pre-rendered.
+ */
+export async function getProjectSlugs(): Promise<
+  { category: string; slug: string }[]
+> {
+  try {
+    const res = await fetchStrapiData<StrapiCollectionResponse<StrapiProject>>(
+      PROJECTS_ENDPOINT,
+      {
+        query: {
+          fields: ["slug"],
+          populate: { practice_category: { fields: ["slug"] } },
+          pagination: { pageSize: 200 },
+        },
+        tags: ["projects"],
+      },
+    );
+    return res.data
+      .filter((p) => Boolean(p.slug) && Boolean(p.practice_category?.slug))
+      .map((p) => ({
+        category: p.practice_category!.slug,
+        slug: p.slug,
+      }));
+  } catch (error) {
+    logStrapiError("getProjectSlugs", error);
+    return [];
+  }
 }

@@ -23,7 +23,7 @@ export function Hero() {
             Practice
             <br />
             <span className="font-light italic text-[#d7d2ca]">
-              Architect
+              Architects
             </span>
           </h1>
 
@@ -35,7 +35,7 @@ export function Hero() {
           </p>
 
           {/* Stats */}
-          <div className="mt-12">
+          {/* <div className="mt-12">
             <dl className="grid grid-cols-3 border-t border-line-strong pt-8">
               {stats.map((stat) => (
                 <div
@@ -52,7 +52,7 @@ export function Hero() {
                 </div>
               ))}
             </dl>
-          </div>
+          </div> */}
 
           {/* CTA */}
           <div className="mt-14">

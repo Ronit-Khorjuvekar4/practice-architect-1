@@ -3,21 +3,26 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { categories } from "@/lib/categories";
+import type { Category } from "@/types/project";
 import { Logo } from "@/components/ui/Logo";
 import { cn } from "@/lib/utils";
 
-const navLinks: { label: string; href: string }[] = [
-  { label: "Home", href: "/" },
-  ...categories.map((category) => ({
-    label: category.label,
-    href: `/${category.slug}`,
-  })),
-];
+type NavbarProps = {
+  /** Practice categories, supplied by the root layout (Strapi-backed). */
+  categories: Category[];
+};
 
-export function Navbar() {
+export function Navbar({ categories }: NavbarProps) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const navLinks: { label: string; href: string }[] = [
+    { label: "Home", href: "/" },
+    ...categories.map((category) => ({
+      label: category.label,
+      href: `/${category.slug}`,
+    })),
+  ];
 
   const isActive = (href: string) =>
     href === "/"

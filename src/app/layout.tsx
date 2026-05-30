@@ -3,6 +3,7 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { BackToTopButton } from "@/components/ui/BackToTopButton";
+import { getCategories } from "@/lib/categories";
 
 export const metadata: Metadata = {
   title: {
@@ -21,15 +22,19 @@ export const metadata: Metadata = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // Fetched once here and passed into the nav chrome as props, so the
+  // client Navbar never needs to be async or fetch on its own.
+  const categories = await getCategories();
+
   return (
     <html lang="en">
       <body className="flex min-h-screen flex-col bg-paper text-ink antialiased">
-        <Navbar />
+        <Navbar categories={categories} />
         <main className="flex-1">{children}</main>
-        <Footer />
+        <Footer categories={categories} />
         <BackToTopButton />
       </body>
     </html>

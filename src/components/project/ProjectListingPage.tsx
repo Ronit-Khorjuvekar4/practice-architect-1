@@ -5,18 +5,25 @@ import { ButtonLink } from "@/components/ui/button";
 
 type ProjectListingPageProps = {
   category: Category;
+  /** All categories — forwarded to the hero for discipline position. */
+  categories: Category[];
   projects: Project[];
 };
 
 export function ProjectListingPage({
   category,
+  categories,
   projects,
 }: ProjectListingPageProps) {
   const hasProjects = projects.length > 0;
 
   return (
     <>
-      <ListingHero category={category} projects={projects} />
+      <ListingHero
+        category={category}
+        categories={categories}
+        projects={projects}
+      />
 
       <section className="border-b border-line-strong bg-panel">
         <div className="mx-auto max-w-[1360px] px-6 py-16 md:px-14 md:py-20">

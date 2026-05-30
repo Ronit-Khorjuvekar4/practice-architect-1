@@ -1,13 +1,18 @@
 import Link from "next/link";
 import type { Category, Project } from "@/types/project";
-import { categories } from "@/lib/categories";
 
 type ListingHeroProps = {
   category: Category;
+  /** All categories — used to show this discipline's position in the set. */
+  categories: Category[];
   projects: Project[];
 };
 
-export function ListingHero({ category, projects }: ListingHeroProps) {
+export function ListingHero({
+  category,
+  categories,
+  projects,
+}: ListingHeroProps) {
   const position = categories.findIndex((c) => c.slug === category.slug) + 1;
 
   const stats = [
