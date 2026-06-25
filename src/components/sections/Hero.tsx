@@ -3,8 +3,6 @@ import { ButtonLink } from "@/components/ui/button";
 
 const stats = [
   { label: "Founded", value: "2008" },
-  { label: "Projects", value: "142" },
-  { label: "Studios", value: "02" },
 ];
 
 export function Hero() {
@@ -14,18 +12,29 @@ export function Hero() {
         <div className="flex flex-col max-w-[620px]">
 
           {/* Top Label */}
-          <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-micro">
-            Multidisciplinary Practice / Est. 2008
-          </p>
+          <div className="inline-flex w-fit items-center gap-3 rounded-full border border-line-strong bg-card/40 px-4 py-2">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#d7d2ca]" aria-hidden="true" />
+
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-micro">
+              Multidisciplinary Practice
+            </p>
+
+            <span className="h-4 w-px bg-line-strong" aria-hidden="true" />
+
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#d7d2ca]">
+              Founded 2008
+            </p>
+          </div>
 
           {/* Hero Heading */}
           <h1 className="mt-10 font-serif text-5xl uppercase leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-[88px]">
             Practice
             <br />
             <span className="font-light italic text-[#d7d2ca]">
-              Architect
+              Architects
             </span>
           </h1>
+
 
           {/* Description */}
           <p className="mt-10 max-w-[520px] text-[15px] leading-[1.9] text-copy">
@@ -33,27 +42,7 @@ export function Hero() {
             interiors, planning and landscape, building considered,
             site-specific environments with a quiet rigor.
           </p>
-
-          {/* Stats */}
-          <div className="mt-12">
-            <dl className="grid grid-cols-3 border-t border-line-strong pt-8">
-              {stats.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="flex flex-col gap-3"
-                >
-                  <dt className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
-                    {stat.label}
-                  </dt>
-
-                  <dd className="font-serif text-[36px] leading-none text-white">
-                    {stat.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-
+          
           {/* CTA */}
           <div className="mt-14">
             <ButtonLink
@@ -70,7 +59,7 @@ export function Hero() {
           <div className="relative aspect-[4/5] w-full overflow-hidden border border-line-strong bg-card">
             <Image
               src="/founder.png"
-              alt="Portrait of the founding architect of Practice Architect"
+              alt="Portrait of the founding architect of Practice Architects"
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 45vw"

@@ -8,8 +8,8 @@ export default function HomePage() {
     <>
       <Hero />
       <PracticeSection />
-      <AchievementsCarousel />
       <CompetitionsSection />
+      <AchievementsCarousel />
     </>
   );
 }

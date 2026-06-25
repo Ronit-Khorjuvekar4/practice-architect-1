@@ -29,11 +29,6 @@ export function SectionHeading({
           {title}
         </h2>
       </div>
-      {description ? (
-        <p className="max-w-sm text-[13px] leading-relaxed text-copy">
-          {description}
-        </p>
-      ) : null}
     </div>
   );
 }

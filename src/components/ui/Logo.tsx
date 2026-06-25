@@ -8,18 +8,18 @@ type LogoProps = {
 };
 
 /**
- * The Practice Architect brand mark — a monochrome diamond glyph paired
+ * The Practice Architects brand mark — a monochrome diamond glyph paired
  * with the serif wordmark. Used in the Navbar and Footer.
  */
 export function Logo() {
   return (
-    <div className="relative h-11 w-[150px] sm:h-12 sm:w-[170px] md:h-200 md:w-[190px]">
+    <div className="relative h-[clamp(550px,7vw,68px)] w-[clamp(165px,18vw,235px)] shrink-0">
       <Image
         src="/logo-tarns.webp"
-        alt="Practice Architect mark"
+        alt="Practice Architects mark"
         fill
         priority
-        sizes="190px"
+        sizes="(max-width: 640px) 165px, (max-width: 1024px) 200px, 235px"
         className="object-contain object-left"
       />
     </div>

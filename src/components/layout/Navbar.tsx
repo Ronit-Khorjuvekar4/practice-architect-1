@@ -26,20 +26,22 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur">
-      <div className="mx-auto flex h-[82px] max-w-[1360px] items-center justify-between px-6 md:px-14">
-        <Link href="/" aria-label="Practice Architect home">
-          <Logo />
-        </Link>
+      <div className="mx-auto flex h-[82px] max-w-[1360px] items-center justify-between px-6 md:px-14 gap-4">
+        <div>
+          <Link href="/" aria-label="Practice Architects home">
+            <Logo />
+          </Link>
+        </div>
 
         <nav aria-label="Primary" className="hidden md:block">
-          <ul className="flex items-center gap-10">
+          <ul className="flex items-center md:gap-5 lg:gap-10">
             {navLinks.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
                   aria-current={isActive(link.href) ? "page" : undefined}
                   className={cn(
-                    "border-b pb-1 text-[13px] uppercase tracking-[0.14em] transition-colors duration-200",
+                    "border-b pb-1 md:text-[12px] lg:text-[13px] uppercase tracking-[0.14em] transition-colors duration-200",
                     isActive(link.href)
                       ? "border-accent text-white"
                       : "border-transparent text-copy hover:border-accent hover:text-white",

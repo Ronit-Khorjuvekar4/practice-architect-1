@@ -12,14 +12,8 @@ type ProjectGalleryProps = {
   title: string;
 };
 
-const tileClasses = [
-  "lg:col-span-6 lg:row-span-2",
-  "lg:col-span-3 lg:row-span-2",
-  "lg:col-span-3 lg:row-span-2",
-  "lg:col-span-4 lg:row-span-3",
-  "lg:col-span-8 lg:row-span-2",
-  "lg:col-span-4 lg:row-span-2",
-];
+const GALLERY_SIZES =
+  "(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, 50vw";
 
 export function ProjectGallery({ media, title }: ProjectGalleryProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -42,47 +36,45 @@ export function ProjectGallery({ media, title }: ProjectGalleryProps) {
     <>
       <ul
         ref={gridRef}
-        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-12 lg:auto-rows-[180px]"
+        className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 lg:gap-5 xl:grid-cols-4"
       >
         {media.map((item, i) => {
           const isVideo = isVideoMedia(item);
 
           return (
-            <li
-              key={`${item.src}-${i}`}
-              className={tileClasses[i % tileClasses.length]}
-            >
+            <li key={`${item.src}-${i}`}>
               <button
                 type="button"
                 onClick={() => setActiveIndex(i)}
                 aria-label={`Open ${title} ${
                   isVideo ? "video" : "image"
                 } ${i + 1} of ${media.length}`}
-                className="group relative block aspect-[4/3] w-full overflow-hidden border border-line bg-card transition-transform duration-300 ease-out hover:-translate-y-0.5 hover:border-accent sm:h-full sm:aspect-auto"
+                className="group relative block aspect-[4/3] w-full cursor-pointer overflow-hidden rounded-xl border border-line bg-card shadow-sm transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-accent hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
               >
                 {isVideo ? (
                   <ProjectVideoPreview
                     media={item}
                     title={title}
                     index={i}
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 66vw"
+                    sizes={GALLERY_SIZES}
                   />
                 ) : (
                   <Image
                     src={item.src}
                     alt={item.alt ?? `${title} image ${i + 1}`}
                     fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 66vw"
-                    className="object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
+                    loading="lazy"
+                    sizes={GALLERY_SIZES}
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06]"
                   />
                 )}
 
-                <span className="absolute right-3 top-3 z-10 border border-line-strong bg-paper/90 px-2 py-1 font-mono text-[10px] tracking-[0.18em] text-white backdrop-blur">
+                <span className="absolute right-3 top-3 z-10 rounded-md border border-line-strong bg-paper/90 px-2 py-1 font-mono text-[10px] tracking-[0.18em] text-white backdrop-blur">
                   {String(i + 1).padStart(2, "0")}
                 </span>
 
                 {!isVideo && (
-                  <span className="absolute bottom-3 left-3 z-10 border border-line-strong bg-paper/90 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.16em] text-micro backdrop-blur">
+                  <span className="absolute bottom-3 left-3 z-10 rounded-md border border-line-strong bg-paper/90 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.16em] text-micro opacity-0 backdrop-blur transition-opacity duration-300 group-hover:opacity-100">
                     Photo
                   </span>
                 )}

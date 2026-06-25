@@ -66,10 +66,9 @@ export function AchievementsCarousel() {
     <section className="border-b border-line-strong bg-panel">
       <div className="mx-auto max-w-[1360px] px-6 py-20 md:px-14 md:py-28">
         <SectionHeading
-          index="02"
+          index="03"
           eyebrow="Recognitions"
           title="Achievements"
-          description="Awards, fellowships and publications from across the practice."
         />
 
         <div className="mt-12 border border-line-strong bg-card p-5 md:p-8">
@@ -83,23 +82,12 @@ export function AchievementsCarousel() {
                   <div className="relative aspect-[4/5] overflow-hidden border border-line-strong bg-panel">
                     <Image
                       src={item.image}
-                      alt={`${item.title}, ${item.year}`}
+                      alt={`${item.title}`}
                       fill
                       sizes="(max-width: 640px) 78vw, (max-width: 1024px) 50vw, 25vw"
                       className="object-cover"
                     />
                   </div>
-                  <div className="flex items-baseline justify-between gap-3">
-                    <span className="font-serif text-lg leading-tight">
-                      {item.title}
-                    </span>
-                    <span className="font-mono text-[12px] text-muted">
-                      {item.year}
-                    </span>
-                  </div>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
-                    {item.type}
-                  </span>
                 </li>
               ))}
             </ul>

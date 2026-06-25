@@ -21,7 +21,7 @@ export function Footer() {
             <div className="relative h-11 w-[150px] sm:h-12 sm:w-[170px] md:h-20 md:w-[190px]">
               <Image
                 src="/logo-tarns.webp"
-                alt="Practice Architect mark"
+                alt="Practice Architects mark"
                 fill
                 priority
                 sizes="190px"
@@ -75,7 +75,7 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col gap-3 border-t border-line py-6 font-mono text-[11px] tracking-[0.08em] text-muted sm:flex-row sm:items-center sm:justify-between">
-          <span>(c) {year} Practice Architect / All rights reserved.</span>
+          <span>(c) {year} Practice Architects / All rights reserved.</span>
           <span>Architecture / Interior / Planning / Landscape</span>
         </div>
       </div>

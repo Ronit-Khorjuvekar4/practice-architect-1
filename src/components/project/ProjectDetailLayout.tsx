@@ -56,18 +56,18 @@ export function ProjectDetailLayout({
             </ol>
           </nav>
 
-          <div className="flex items-end justify-between gap-6 pb-5 pt-8 font-mono text-[11px] uppercase tracking-[0.18em] text-micro">
+          {/* <div className="flex items-end justify-between gap-6 pb-5 pt-8 font-mono text-[11px] uppercase tracking-[0.18em] text-micro">
             <span>Featured Image</span>
             <span className="hidden sm:inline">16:9</span>
-          </div>
+          </div> */}
 
-          <figure className="relative mb-8 aspect-[16/9] w-full overflow-hidden border border-line-strong bg-card">
+          {/* <figure className="relative mb-8 aspect-[16/9] w-full overflow-hidden border border-line-strong bg-card">
             <ProjectHeroMedia
               media={project.media}
               title={project.title}
               categoryLabel={category.label}
             />
-          </figure>
+          </figure> */}
         </div>
       </section>
 
@@ -81,14 +81,14 @@ export function ProjectDetailLayout({
               <h1 className="mt-5 max-w-5xl font-serif text-5xl uppercase leading-[0.98] tracking-normal text-white sm:text-6xl lg:text-8xl">
                 {project.title}
               </h1>
-              <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
+              {/* <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
                 {category.label} / {project.area} / {project.location}
-              </p>
+              </p> */}
             </div>
             <StatusBadge status={project.status} className="mt-1" />
           </div>
 
-          <div className="mt-12 grid gap-12 border-t border-line-strong pt-10 lg:grid-cols-2 lg:gap-20">
+          {/* <div className="mt-12 grid gap-12 border-t border-line-strong pt-10 lg:grid-cols-2 lg:gap-20">
             <ProjectMetaGrid project={project} category={category} />
             <article className="max-w-[68ch]">
               <p className="font-serif text-2xl leading-[1.4] text-white">
@@ -98,14 +98,14 @@ export function ProjectDetailLayout({
                 {project.description}
               </p>
             </article>
-          </div>
+          </div> */}
         </div>
       </section>
 
       <section className="border-b border-line-strong bg-paper">
         <div className="mx-auto max-w-[1600px] px-6 py-16 md:px-14 md:py-24">
           <SectionHeading
-            index="04"
+            index="01"
             eyebrow="Media"
             title="Project Gallery"
             description={galleryDescription}
