@@ -7,17 +7,17 @@ import { BackToTopButton } from "@/components/ui/BackToTopButton";
 export const metadata: Metadata = {
   title: {
     default:
-      "Practice Architect — Architecture, Interior, Planning & Landscape",
-    template: "%s · Practice Architect",
+      "Practice Architects — Architecture, Interior, Planning & Landscape",
+    template: "%s · Practice Architects",
   },
   description:
-    "Practice Architect is a multidisciplinary studio working across architecture, interior, planning and landscape — building considered, site-specific environments with a quiet rigor.",
+    "Practice Architects is a multidisciplinary studio working across architecture, interior, planning and landscape — building considered, site-specific environments with a quiet rigor.",
   keywords: [
     "architecture",
     "interior design",
     "urban planning",
     "landscape architecture",
-    "Practice Architect",
+    "Practice Architects",
   ],
 };
 

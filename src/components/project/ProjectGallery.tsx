@@ -12,14 +12,12 @@ type ProjectGalleryProps = {
   title: string;
 };
 
-const tileClasses = [
-  "lg:col-span-6 lg:row-span-2",
-  "lg:col-span-3 lg:row-span-2",
-  "lg:col-span-3 lg:row-span-2",
-  "lg:col-span-4 lg:row-span-3",
-  "lg:col-span-8 lg:row-span-2",
-  "lg:col-span-4 lg:row-span-2",
-];
+/**
+ * Matches the responsive grid: 1 col on mobile, 2 on tablet, 3 on desktop.
+ * Tells Next.js which source resolution to fetch for each square cell.
+ */
+const GALLERY_SIZES =
+  "(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 33vw";
 
 export function ProjectGallery({ media, title }: ProjectGalleryProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -38,54 +36,73 @@ export function ProjectGallery({ media, title }: ProjectGalleryProps) {
     }
   };
 
+  if (media.length === 0) {
+    return null;
+  }
+
   return (
     <>
       <ul
         ref={gridRef}
-        className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-12 lg:auto-rows-[180px]"
+        role="list"
+        aria-label="Project gallery"
+        className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3"
       >
         {media.map((item, i) => {
           const isVideo = isVideoMedia(item);
+          const isEager = i < 3;
 
           return (
-            <li
-              key={`${item.src}-${i}`}
-              className={tileClasses[i % tileClasses.length]}
-            >
+            <li key={`${item.src}-${i}`} className="min-w-0">
               <button
                 type="button"
                 onClick={() => setActiveIndex(i)}
                 aria-label={`Open ${title} ${
                   isVideo ? "video" : "image"
                 } ${i + 1} of ${media.length}`}
-                className="group relative block aspect-[4/3] w-full overflow-hidden border border-line bg-card transition-transform duration-300 ease-out hover:-translate-y-0.5 hover:border-accent sm:h-full sm:aspect-auto"
+                style={{ backgroundColor: "var(--surface-strong)" }}
+                className="group relative block aspect-square w-full cursor-pointer overflow-hidden p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
               >
                 {isVideo ? (
                   <ProjectVideoPreview
                     media={item}
                     title={title}
                     index={i}
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 66vw"
+                    sizes={GALLERY_SIZES}
+                    priority={isEager}
                   />
                 ) : (
                   <Image
                     src={item.src}
-                    alt={item.alt ?? `${title} image ${i + 1}`}
+                    alt={item.alt ?? `${title} — image ${i + 1}`}
                     fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 66vw"
-                    className="object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
+                    quality={85}
+                    loading={isEager ? "eager" : "lazy"}
+                    priority={isEager}
+                    sizes={GALLERY_SIZES}
+                    style={{ objectFit: "fill", objectPosition: "center" }}
+                    className="transition-transform duration-[400ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.04]"
                   />
                 )}
 
-                <span className="absolute right-3 top-3 z-10 border border-line-strong bg-paper/90 px-2 py-1 font-mono text-[10px] tracking-[0.18em] text-white backdrop-blur">
+                {/* Hover darken overlay */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 z-[1] bg-black/0 transition-colors duration-200 group-hover:bg-black/30"
+                />
+
+                {/* Index badge — top-right */}
+                <span
+                  aria-hidden="true"
+                  style={{
+                    backgroundColor: "var(--background)",
+                    color: "var(--text-secondary)",
+                    fontFamily: "var(--font-sans)",
+                  }}
+                  className="absolute right-2 top-2 z-[2] px-1.5 py-[3px] text-[10px] leading-none tracking-[0.08em]"
+                >
                   {String(i + 1).padStart(2, "0")}
                 </span>
-
-                {!isVideo && (
-                  <span className="absolute bottom-3 left-3 z-10 border border-line-strong bg-paper/90 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.16em] text-micro backdrop-blur">
-                    Photo
-                  </span>
-                )}
               </button>
             </li>
           );

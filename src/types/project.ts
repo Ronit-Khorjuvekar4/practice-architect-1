@@ -1,5 +1,5 @@
 /**
- * Shared domain types for Practice Architect.
+ * Shared domain types for Practice Architects.
  *
  * `Category` is defined here (rather than in `lib/categories.ts`) so that
  * every type lives in one place and can be imported across the app.
@@ -7,7 +7,7 @@
 
 export type CategorySlug = "architecture" | "interior" | "planning" | "landscape";
 
-export type ProjectStatus = "Completed" | "In Progress";
+// export type ProjectStatus = "Completed" | "In Progress";
 
 export type Category = {
   slug: CategorySlug;
@@ -31,11 +31,11 @@ export type Project = {
   title: string;
   slug: string;
   category: CategorySlug;
-  shortDescription: string;
-  description: string;
+  // shortDescription: string;
+  // description: string;
   location: string;
   area: string;
   dateOfCompletion: string;
-  status: ProjectStatus;
+  // status: ProjectStatus;
   media: ProjectMedia[];
 };

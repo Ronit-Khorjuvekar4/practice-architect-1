@@ -9,7 +9,7 @@ export function CompetitionsSection() {
     <section className="border-b border-line-strong bg-paper">
       <div className="mx-auto max-w-[1360px] px-6 py-20 md:px-14 md:py-28">
         <SectionHeading
-          index="03"
+          index="02"
           eyebrow="Submissions"
           title="Competitions"
           description="Open, invited and international competition entries from the studio archive."
