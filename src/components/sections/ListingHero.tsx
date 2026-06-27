@@ -10,17 +10,17 @@ type ListingHeroProps = {
 export function ListingHero({ category, projects }: ListingHeroProps) {
   const position = categories.findIndex((c) => c.slug === category.slug) + 1;
 
-  const stats = [
-    { label: "Total", value: projects.length },
-    {
-      label: "Completed",
-      value: projects.filter((p) => p.status === "Completed").length,
-    },
-    {
-      label: "In Progress",
-      value: projects.filter((p) => p.status === "In Progress").length,
-    },
-  ];
+  // const stats = [
+  //   { label: "Total", value: projects.length },
+  //   {
+  //     label: "Completed",
+  //     value: projects.filter((p) => p.status === "Completed").length,
+  //   },
+  //   {
+  //     label: "In Progress",
+  //     value: projects.filter((p) => p.status === "In Progress").length,
+  //   },
+  // ];
 
   return (
     <section className="border-b border-line-strong bg-paper">
@@ -45,14 +45,13 @@ export function ListingHero({ category, projects }: ListingHeroProps) {
               Discipline / {String(position).padStart(2, "0")} of{" "}
               {String(categories.length).padStart(2, "0")}
             </span>
-            <h1 className="mt-5 font-serif text-6xl uppercase leading-[0.95] tracking-tight text-white sm:text-7xl lg:text-8xl">
-              {category.label}
-              <br />
-              <span className="font-light italic text-muted">Portfolio</span>
+
+            <h1 className="mt-5 font-serif uppercase text-white leading-none whitespace-normal lg:whitespace-nowrap text-[clamp(2.5rem,7vw,4.5rem)]">
+              {category.label} Portfolio
             </h1>
           </div>
 
-          <div className="flex flex-col gap-6">
+          {/* <div className="flex flex-col gap-6">
             <p className="text-[14px] leading-[1.7] text-copy">
               {category.description}
             </p>
@@ -68,7 +67,7 @@ export function ListingHero({ category, projects }: ListingHeroProps) {
                 </div>
               ))}
             </dl>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>

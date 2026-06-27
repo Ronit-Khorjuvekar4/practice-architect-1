@@ -11,7 +11,7 @@ export const categories: Category[] = [
     title: "Architecture Portfolio",
     description:
       "Built and unbuilt architectural work across residential, civic and cultural typologies — from small interventions to masterplanned districts.",
-    img:"/Residential.png"
+    img:"/home/Architeture.jpg"
   },
   {
     slug: "interior",
@@ -19,7 +19,7 @@ export const categories: Category[] = [
     title: "Interior Portfolio",
     description:
       "Interior commissions spanning hospitality, retail and residential — material-led, atmosphere-first, never decorative.",
-    img:"/INTERIOR.png"
+    img:"/home/Interiour.jpg"
   },
   {
     slug: "planning",
@@ -27,7 +27,7 @@ export const categories: Category[] = [
     title: "Planning Portfolio",
     description:
       "Urban planning, masterplanning and feasibility studies — neighbourhood-scale work that knits architecture to its city.",
-    img:"/Commercial.png"
+    img:"/home/landscape.jpg"
   },
   {
     slug: "landscape",
@@ -35,7 +35,7 @@ export const categories: Category[] = [
     title: "Landscape Portfolio",
     description:
       "Landscape, garden and public-realm design — sites read first as terrain, then as plan.",
-    img:"/Landscape.png"
+    img:"/home/planning.jpg"
   },
 ];
 

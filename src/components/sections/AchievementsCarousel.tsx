@@ -68,24 +68,24 @@ export function AchievementsCarousel() {
         <SectionHeading
           index="03"
           eyebrow="Recognitions"
-          title="Achievements"
+          title="Photo Gallery"
         />
 
         <div className="mt-12 border border-line-strong bg-card p-5 md:p-8">
           <div ref={emblaRef} className="overflow-hidden">
-            <ul className="flex gap-6">
+            <ul className="-ml-6 flex">
               {achievements.map((item) => (
                 <li
                   key={item.title}
-                  className="flex min-w-0 shrink-0 basis-[78%] flex-col gap-4 sm:basis-[calc(50%_-_12px)] lg:basis-[calc(25%_-_18px)]"
+                  className="min-w-0 shrink-0 basis-[78%] pl-6 sm:basis-1/2 lg:basis-1/4"
                 >
                   <div className="relative aspect-[4/5] overflow-hidden border border-line-strong bg-panel">
                     <Image
                       src={item.image}
-                      alt={`${item.title}`}
+                      alt={item.title}
                       fill
                       sizes="(max-width: 640px) 78vw, (max-width: 1024px) 50vw, 25vw"
-                      className="object-cover"
+                      style={{ objectFit: "cover", objectPosition: "center" }}
                     />
                   </div>
                 </li>

@@ -1,5 +1,5 @@
 import type { Category, Project } from "@/types/project";
-import { StatusBadge } from "@/components/ui/StatusBadge";
+// import { StatusBadge } from "@/components/ui/StatusBadge";
 
 type ProjectMetaGridProps = {
   project: Project;
@@ -36,7 +36,7 @@ export function ProjectMetaGrid({ project, category }: ProjectMetaGridProps) {
           Status
         </dt>
         <dd>
-          <StatusBadge status={project.status} />
+          {/* <StatusBadge status={project.status} /> */}
         </dd>
       </div>
       <div className="flex flex-col gap-2 border-t border-line pt-4">

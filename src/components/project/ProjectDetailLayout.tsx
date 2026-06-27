@@ -5,7 +5,7 @@ import { ProjectHeroMedia } from "@/components/project/ProjectHeroMedia";
 import { ProjectMetaGrid } from "@/components/project/ProjectMetaGrid";
 import { ButtonLink } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { StatusBadge } from "@/components/ui/StatusBadge";
+// import { StatusBadge } from "@/components/ui/StatusBadge";
 
 type ProjectDetailLayoutProps = {
   project: Project;
@@ -22,9 +22,8 @@ export function ProjectDetailLayout({
   const videoCount = project.media.length - imageCount;
   const galleryDescription =
     videoCount > 0
-      ? `${imageCount} image${imageCount === 1 ? "" : "s"} and ${videoCount} video${
-          videoCount === 1 ? "" : "s"
-        } from ${project.title}.`
+      ? `${imageCount} image${imageCount === 1 ? "" : "s"} and ${videoCount} video${videoCount === 1 ? "" : "s"
+      } from ${project.title}.`
       : `${imageCount} project image${imageCount === 1 ? "" : "s"} from ${project.title}.`;
 
   return (
@@ -55,19 +54,6 @@ export function ProjectDetailLayout({
               <li className="text-white">{project.title}</li>
             </ol>
           </nav>
-
-          {/* <div className="flex items-end justify-between gap-6 pb-5 pt-8 font-mono text-[11px] uppercase tracking-[0.18em] text-micro">
-            <span>Featured Image</span>
-            <span className="hidden sm:inline">16:9</span>
-          </div> */}
-
-          {/* <figure className="relative mb-8 aspect-[16/9] w-full overflow-hidden border border-line-strong bg-card">
-            <ProjectHeroMedia
-              media={project.media}
-              title={project.title}
-              categoryLabel={category.label}
-            />
-          </figure> */}
         </div>
       </section>
 
@@ -78,27 +64,12 @@ export function ProjectDetailLayout({
               <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-micro">
                 Project Overview
               </span>
-              <h1 className="mt-5 max-w-5xl font-serif text-5xl uppercase leading-[0.98] tracking-normal text-white sm:text-6xl lg:text-8xl">
+              <h1 className="mt-5 max-w-5xl font-serif uppercase leading-[0.98] tracking-normal text-white text-3xl sm:text-6xl">
                 {project.title}
               </h1>
-              {/* <p className="mt-5 font-mono text-[11px] uppercase tracking-[0.16em] text-muted">
-                {category.label} / {project.area} / {project.location}
-              </p> */}
             </div>
-            <StatusBadge status={project.status} className="mt-1" />
+            {/* <StatusBadge status={project.status} className="mt-1" /> */}
           </div>
-
-          {/* <div className="mt-12 grid gap-12 border-t border-line-strong pt-10 lg:grid-cols-2 lg:gap-20">
-            <ProjectMetaGrid project={project} category={category} />
-            <article className="max-w-[68ch]">
-              <p className="font-serif text-2xl leading-[1.4] text-white">
-                {project.shortDescription}
-              </p>
-              <p className="mt-7 text-[15px] leading-[1.8] text-copy">
-                {project.description}
-              </p>
-            </article>
-          </div> */}
         </div>
       </section>
 

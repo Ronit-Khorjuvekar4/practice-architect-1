@@ -19,8 +19,9 @@ export function CategoryCard({ category, index }: CategoryCardProps) {
         <Image
           src={`${category.img}`}
           alt={`${category.label} practice discipline`}
-          fill
+          style={{ objectFit: "cover" }}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          fill
         />
         <div className="absolute inset-0 bg-black/20" aria-hidden="true" />
         <span className="absolute right-3 top-3 border border-line-strong bg-paper/90 px-2 py-1 font-mono text-[10px] tracking-[0.18em] text-white backdrop-blur">
@@ -35,9 +36,9 @@ export function CategoryCard({ category, index }: CategoryCardProps) {
         <h3 className="font-serif text-2xl uppercase leading-tight tracking-[0.02em] text-white">
           {category.label}
         </h3>
-        <p className="line-clamp-3 text-[13px] leading-relaxed text-copy">
+        {/* <p className="line-clamp-3 text-[13px] leading-relaxed text-copy">
           {category.description}
-        </p>
+        </p> */}
         <div className="mt-auto flex items-center justify-between border-t border-line pt-4">
           <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
             View Practice

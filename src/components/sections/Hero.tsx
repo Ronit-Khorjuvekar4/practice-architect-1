@@ -27,13 +27,16 @@ export function Hero() {
           </div>
 
           {/* Hero Heading */}
-          <h1 className="mt-10 font-serif text-5xl uppercase leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-[88px]">
-            Practice
-            <br />
-            <span className="font-light italic text-[#d7d2ca]">
-              Architects
-            </span>
-          </h1>
+          <div className="mt-10 sm:align-middle align-middle">
+            <Image
+              src="/logo-tarns.webp"
+              alt="Practice Architects"
+              width={520}
+              height={220}
+              priority
+              className="h-auto w-[2800px] sm:w-[420px] lg:w-[560px]"
+            />
+          </div>
 
 
           {/* Description */}
@@ -42,7 +45,7 @@ export function Hero() {
             interiors, planning and landscape, building considered,
             site-specific environments with a quiet rigor.
           </p>
-          
+
           {/* CTA */}
           <div className="mt-14">
             <ButtonLink
@@ -56,9 +59,9 @@ export function Hero() {
         </div>
 
         <div className="relative">
-          <div className="relative aspect-[4/5] w-full overflow-hidden border border-line-strong bg-card">
+          <div className="relative aspect-[4/4] w-full overflow-hidden border border-line-strong bg-card">
             <Image
-              src="/founder.png"
+              src="/SHASHIKER CHOWDHARY.jpg"
               alt="Portrait of the founding architect of Practice Architects"
               fill
               priority

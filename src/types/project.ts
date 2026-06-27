@@ -7,7 +7,7 @@
 
 export type CategorySlug = "architecture" | "interior" | "planning" | "landscape";
 
-export type ProjectStatus = "Completed" | "In Progress";
+// export type ProjectStatus = "Completed" | "In Progress";
 
 export type Category = {
   slug: CategorySlug;
@@ -36,6 +36,6 @@ export type Project = {
   location: string;
   area: string;
   dateOfCompletion: string;
-  status: ProjectStatus;
+  // status: ProjectStatus;
   media: ProjectMedia[];
 };
