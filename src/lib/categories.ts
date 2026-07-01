@@ -27,7 +27,7 @@ export const categories: Category[] = [
     title: "Planning Portfolio",
     description:
       "Urban planning, masterplanning and feasibility studies — neighbourhood-scale work that knits architecture to its city.",
-    img:"/home/landscape.jpg"
+    img:"/home/planning.jpg"
   },
   {
     slug: "landscape",
@@ -35,7 +35,7 @@ export const categories: Category[] = [
     title: "Landscape Portfolio",
     description:
       "Landscape, garden and public-realm design — sites read first as terrain, then as plan.",
-    img:"/home/planning.jpg"
+    img:"/home/landscape.jpg"
   },
 ];
 

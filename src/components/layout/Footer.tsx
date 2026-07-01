@@ -4,10 +4,10 @@ import { Logo } from "@/components/ui/Logo";
 import Image from "next/image";
 
 const contactLines = [
-  "studio@practicearchitect.co",
-  "+44 (0) 20 7946 0911",
-  "22 Foundry Lane, Studio 4",
-  "Shoreditch, London EC2A 3DB",
+  "practicearchitects309@gmail.com  practicearchitects310@gmail.com",
+  "+91-8108955171 / +91-9769616171",
+  "Office No. 301, Plot No. 09, Sector-15",
+  "Bhoomi Mall, CBD Belapur, Navi Mumbai - 400614",
 ];
 
 export function Footer() {
