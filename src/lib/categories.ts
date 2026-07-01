@@ -27,7 +27,7 @@ export const categories: Category[] = [
     title: "Planning Portfolio",
     description:
       "Urban planning, masterplanning and feasibility studies — neighbourhood-scale work that knits architecture to its city.",
-    img:"/home/planning.jpg" 
+    img:"/home/planningg.png" 
   },
   {
     slug: "landscape",
