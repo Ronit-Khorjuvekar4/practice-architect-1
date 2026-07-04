@@ -80,7 +80,7 @@ export function ProjectGallery({ media, title }: ProjectGalleryProps) {
                     loading={isEager ? "eager" : "lazy"}
                     priority={isEager}
                     sizes={GALLERY_SIZES}
-                    style={{ objectFit: "fill", objectPosition: "center" }}
+                    style={{ objectFit: "contain", objectPosition: "center" }}
                     className="transition-transform duration-[400ms] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.04]"
                   />
                 )}

@@ -1,10 +1,6 @@
 import Image from "next/image";
 import { ButtonLink } from "@/components/ui/button";
 
-const stats = [
-  { label: "Founded", value: "2008" },
-];
-
 export function Hero() {
   return (
     <section className="border-b border-line-strong bg-paper">
@@ -22,7 +18,7 @@ export function Hero() {
             <span className="h-4 w-px bg-line-strong" aria-hidden="true" />
 
             <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#d7d2ca]">
-              Founded 2008
+              Founded 2011
             </p>
           </div>
 
@@ -61,7 +57,7 @@ export function Hero() {
         <div className="relative">
           <div className="relative aspect-[4/4] w-full overflow-hidden border border-line-strong bg-card">
             <Image
-              src="/SHASHIKER CHOWDHARY.jpg"
+              src="/owner.png"
               alt="Portrait of the founding architect of Practice Architects"
               fill
               priority

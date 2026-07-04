@@ -31,7 +31,7 @@ export function ProjectCard({
           fill
           sizes={imageSizes}
           className="transition duration-700 ease-out group-hover:scale-105 group-hover:opacity-100"
-          style={{ objectFit: "fill", objectPosition: "center" }}
+          style={{ objectFit: "contain", objectPosition: "center" }}
         />
         <div className="absolute inset-0 bg-black/20" aria-hidden="true" />
         {/* <span className="absolute left-3 top-3">
