@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { categories } from "@/lib/categories";
@@ -24,10 +24,14 @@ export function Navbar() {
       ? pathname === "/"
       : pathname === href || pathname.startsWith(`${href}/`);
 
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur">
-      <div className="mx-auto flex h-[82px] max-w-[1360px] items-center justify-between px-6 md:px-14 gap-4">
-        <div>
+    <header className="sticky top-0 z-[999] border-b border-line bg-paper/90 backdrop-blur">
+      <div className="mx-auto flex h-[82px] max-w-[1360px] items-center justify-between gap-4 px-6 md:px-14">
+        <div className="relative z-[1000]">
           <Link href="/" aria-label="Practice Architects home">
             <Logo />
           </Link>
@@ -41,10 +45,10 @@ export function Navbar() {
                   href={link.href}
                   aria-current={isActive(link.href) ? "page" : undefined}
                   className={cn(
-                    "border-b pb-1 md:text-[12px] lg:text-[13px] uppercase tracking-[0.14em] transition-colors duration-200",
+                    "block py-4 text-[13px] uppercase tracking-[0.14em] transition-colors",
                     isActive(link.href)
-                      ? "border-accent text-white"
-                      : "border-transparent text-copy hover:border-accent hover:text-white",
+                      ? "text-white"
+                      : "text-copy hover:text-white"
                   )}
                 >
                   {link.label}
@@ -56,12 +60,15 @@ export function Navbar() {
 
         <button
           type="button"
-          className="flex h-10 w-10 items-center justify-center border border-line text-white transition-colors hover:border-accent hover:bg-accent hover:text-button-text md:hidden"
+          className="relative z-[1000] flex h-10 w-10 items-center justify-center border border-line text-white transition-colors hover:border-accent hover:bg-accent hover:text-button-text md:hidden"
           aria-expanded={menuOpen}
           aria-controls="mobile-navigation"
           onClick={() => setMenuOpen((open) => !open)}
         >
-          <span className="sr-only">{menuOpen ? "Close menu" : "Open menu"}</span>
+          <span className="sr-only">
+            {menuOpen ? "Close menu" : "Open menu"}
+          </span>
+
           <svg
             width="18"
             height="18"
@@ -84,7 +91,7 @@ export function Navbar() {
         <nav
           id="mobile-navigation"
           aria-label="Mobile"
-          className="border-t border-line bg-panel md:hidden"
+          className="relative z-[1000] border-t border-line bg-panel md:hidden"
         >
           <ul className="mx-auto max-w-[1360px] px-6">
             {navLinks.map((link) => (
@@ -94,13 +101,12 @@ export function Navbar() {
               >
                 <Link
                   href={link.href}
-                  onClick={() => setMenuOpen(false)}
                   aria-current={isActive(link.href) ? "page" : undefined}
                   className={cn(
-                    "block py-4 text-[13px] uppercase tracking-[0.14em] transition-colors",
+                    "relative z-[1000] block w-full py-4 text-[13px] uppercase tracking-[0.14em] transition-colors",
                     isActive(link.href)
                       ? "text-white"
-                      : "text-copy hover:text-white",
+                      : "text-copy hover:text-white"
                   )}
                 >
                   {link.label}
