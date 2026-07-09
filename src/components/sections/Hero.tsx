@@ -57,7 +57,7 @@ export function Hero() {
         <div className="relative">
           <div className="relative aspect-[4/4] w-full overflow-hidden border border-line-strong bg-card">
             <Image
-              src="/owner.png"
+              src="/home/sachiker.jpeg"
               alt="Portrait of the founding architect of Practice Architects"
               fill
               priority
