@@ -58,6 +58,13 @@
     text-decoration: none;
   }
 
+  img,
+  video {
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+
   ::selection {
     background-color: var(--accent);
     color: var(--background);

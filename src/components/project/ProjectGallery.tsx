@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import type { ProjectMedia } from "@/types/project";
 import { isVideoMedia } from "@/lib/media";
@@ -21,20 +21,6 @@ const GALLERY_SIZES =
 
 export function ProjectGallery({ media, title }: ProjectGalleryProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const gridRef = useRef<HTMLUListElement>(null);
-
-  const handleClose = () => {
-    const opened = activeIndex;
-    setActiveIndex(null);
-
-    if (opened !== null) {
-      requestAnimationFrame(() => {
-        const buttons =
-          gridRef.current?.querySelectorAll<HTMLButtonElement>("button");
-        buttons?.[opened]?.focus();
-      });
-    }
-  };
 
   if (media.length === 0) {
     return null;
@@ -43,7 +29,6 @@ export function ProjectGallery({ media, title }: ProjectGalleryProps) {
   return (
     <>
       <ul
-        ref={gridRef}
         role="list"
         aria-label="Project gallery"
         className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3"
@@ -114,7 +99,7 @@ export function ProjectGallery({ media, title }: ProjectGalleryProps) {
           media={media}
           title={title}
           index={activeIndex}
-          onClose={handleClose}
+          onClose={() => setActiveIndex(null)}
           onIndexChange={setActiveIndex}
         />
       )}

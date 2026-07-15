@@ -3,6 +3,7 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { BackToTopButton } from "@/components/ui/BackToTopButton";
+import { MediaProtection } from "@/components/ui/MediaProtection";
 
 export const metadata: Metadata = {
   title: {
@@ -27,6 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="flex min-h-screen flex-col bg-paper text-ink antialiased">
+        <MediaProtection />
         <Navbar />
         <main className="flex-1">{children}</main>
         <Footer />
