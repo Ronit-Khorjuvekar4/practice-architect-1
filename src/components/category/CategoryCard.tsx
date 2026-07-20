@@ -9,6 +9,10 @@ type CategoryCardProps = {
 
 export function CategoryCard({ category, index }: CategoryCardProps) {
   const number = String(index).padStart(2, "0");
+  const imageSrc = category.bannerImage?.url || category.img;
+  const imageAlt =
+    category.bannerImage?.alternativeText ||
+    `${category.label} practice discipline`;
 
   return (
     <Link
@@ -17,8 +21,8 @@ export function CategoryCard({ category, index }: CategoryCardProps) {
     >
       <div className="relative aspect-[3/4] overflow-hidden border-b border-line">
         <Image
-          src={`${category.img}`}
-          alt={`${category.label} practice discipline`}
+          src={imageSrc}
+          alt={imageAlt}
           style={{ objectFit: "cover" }}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           fill

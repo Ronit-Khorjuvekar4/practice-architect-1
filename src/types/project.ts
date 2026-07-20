@@ -15,11 +15,21 @@ export type CategorySlug =
 
 export type ProjectStatus = "Completed" | "In Progress";
 
+export type CategoryBannerImage = {
+  id?: string | number;
+  url: string;
+  alternativeText: string;
+  width?: number;
+  height?: number;
+};
+
 export type Category = {
   slug: CategorySlug;
   label: string;
   title: string;
   description: string;
+  bannerImage: CategoryBannerImage | null;
+  /** Local fallback used only when Strapi has no valid banner image. */
   img: string;
 };
 

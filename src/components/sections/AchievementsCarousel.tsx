@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
@@ -9,21 +9,12 @@ import {
   type GalleryLightboxItem,
 } from "@/components/ui/GalleryLightbox";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { achievements } from "@/lib/achievements";
 import { cn } from "@/lib/utils";
+import type { GalleryImage } from "@/types/photo-gallery";
 
 const CAROUSEL_IMAGE_SIZES =
   "(max-width: 639px) 78vw, (max-width: 1023px) 50vw, (max-width: 1360px) 25vw, 300px";
 const MAX_VISIBLE_INDICATORS = 12;
-
-const achievementLightboxMedia: GalleryLightboxItem[] = achievements.map(
-  (item) => ({
-    type: "image",
-    src: item.image,
-    alt: item.title,
-    title: item.title,
-  }),
-);
 
 function getVisibleIndicatorIndexes(total: number, activeIndex: number) {
   const visibleCount = Math.min(total, MAX_VISIBLE_INDICATORS);
@@ -36,31 +27,33 @@ function getVisibleIndicatorIndexes(total: number, activeIndex: number) {
 }
 
 const AchievementSlides = memo(function AchievementSlides({
+  images,
   onOpen,
 }: {
+  images: readonly GalleryImage[];
   onOpen: (index: number) => void;
 }) {
   return (
     <ul className="-ml-6 flex">
-      {achievements.map((item, index) => (
+      {images.map((image, index) => (
         <li
-          key={item.image}
+          key={image.id}
           className="min-w-0 shrink-0 basis-[78%] pl-6 sm:basis-1/2 lg:basis-1/4"
         >
           <button
             type="button"
             onClick={() => onOpen(index)}
-            aria-label={`Open achievement image ${index + 1} of ${achievements.length}: ${item.title}`}
+            aria-label={`Open achievement image ${index + 1} of ${images.length}: ${image.alternativeText}`}
             className="group relative block aspect-[4/5] w-full cursor-zoom-in overflow-hidden border border-line-strong bg-panel p-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-card"
           >
             <Image
-              src={item.image}
-              alt={item.title}
+              src={image.url}
+              alt={image.alternativeText}
               fill
               loading="lazy"
               sizes={CAROUSEL_IMAGE_SIZES}
               draggable={false}
-              className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.02]"
+              className="object-contain object-center transition-transform duration-300 group-hover:scale-[1.02]"
             />
           </button>
         </li>
@@ -74,11 +67,16 @@ const AchievementSlides = memo(function AchievementSlides({
  * A scroll-snap track with monochrome prev/next controls and indicators —
  * wraps around at either end for an infinite-loop feel.
  */
-export function AchievementsCarousel() {
+type AchievementsCarouselProps = {
+  images: GalleryImage[];
+};
+
+export function AchievementsCarousel({ images }: AchievementsCarouselProps) {
+  const total = images.length;
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
       align: "start",
-      loop: true,
+      loop: total > 1,
     },
     [
       Autoplay({
@@ -90,8 +88,16 @@ export function AchievementsCarousel() {
   );
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const total = achievements.length;
   const indicatorIndexes = getVisibleIndicatorIndexes(total, activeIndex);
+  const lightboxMedia = useMemo<GalleryLightboxItem[]>(
+    () =>
+      images.map((image) => ({
+        type: "image",
+        src: image.url,
+        alt: image.alternativeText,
+      })),
+    [images],
+  );
 
   const updateActiveIndex = useCallback(() => {
     if (!emblaApi) return;
@@ -144,6 +150,8 @@ export function AchievementsCarousel() {
     setLightboxIndex(null);
   }, []);
 
+  if (total === 0) return null;
+
   return (
     <>
       <section className="border-b border-line-strong bg-panel">
@@ -156,7 +164,7 @@ export function AchievementsCarousel() {
 
           <div className="mt-12 border border-line-strong bg-card p-5 md:p-8">
             <div ref={emblaRef} className="overflow-hidden">
-              <AchievementSlides onOpen={openLightbox} />
+              <AchievementSlides images={images} onOpen={openLightbox} />
             </div>
 
             <div className="mt-7 flex items-center justify-between gap-4 border-t border-line pt-5">
@@ -168,7 +176,7 @@ export function AchievementsCarousel() {
               <div className="hidden gap-2 sm:flex" aria-hidden="true">
                 {indicatorIndexes.map((index) => (
                   <button
-                    key={achievements[index].image}
+                    key={images[index].id}
                     type="button"
                     tabIndex={-1}
                     aria-label={`Go to achievement ${index + 1}`}
@@ -229,7 +237,7 @@ export function AchievementsCarousel() {
 
       {lightboxIndex !== null && (
         <GalleryLightbox
-          media={achievementLightboxMedia}
+          media={lightboxMedia}
           title="Achievements"
           index={lightboxIndex}
           onClose={closeLightbox}

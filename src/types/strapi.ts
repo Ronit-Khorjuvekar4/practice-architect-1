@@ -98,7 +98,8 @@ export interface StrapiCategory {
   slug: string;
   label?: string | null;
   description?: string | null;
-  image?: StrapiMediaField;
+  /** Single media field (populated). */
+  bannerImage?: StrapiMediaField;
 }
 
 /** A `project` collection entry (Strapi v5, flattened). */
@@ -123,4 +124,12 @@ export interface StrapiProject {
   coverImage?: StrapiMediaField;
   /** Optional shared.seo component (populated). */
   seo?: StrapiSeo | null;
+}
+
+/** A `photo-gallery` collection entry (Strapi v5, flattened). */
+export interface StrapiPhotoGalleryEntry {
+  id: number;
+  documentId?: string;
+  /** Single media field (populated). */
+  gallery_image?: StrapiMedia | null;
 }
