@@ -1,8 +1,13 @@
-import { categories } from "@/lib/categories";
+import type { Category } from "@/types/project";
 import { CategoryCard } from "@/components/category/CategoryCard";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
-export function PracticeSection() {
+type PracticeSectionProps = {
+  /** Practice categories, supplied by the home page (Strapi-backed). */
+  categories: Category[];
+};
+
+export function PracticeSection({ categories }: PracticeSectionProps) {
   return (
     <section
       id="selected-work"

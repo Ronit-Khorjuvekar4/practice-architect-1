@@ -16,10 +16,14 @@ export function ProjectDetailLayout({
   project,
   category,
 }: ProjectDetailLayoutProps) {
-  const imageCount = project.media.filter(
+  const galleryMedia = Array.isArray(project.project_media)
+    ? project.project_media
+    : [];
+  const imageCount = galleryMedia.filter(
     (item) => item.type === "image",
   ).length;
-  const videoCount = project.media.length - imageCount;
+  const totalGalleryItems = galleryMedia.length;
+  const videoCount = totalGalleryItems - imageCount;
   const galleryDescription =
     videoCount > 0
       ? `${imageCount} image${imageCount === 1 ? "" : "s"} and ${videoCount} video${videoCount === 1 ? "" : "s"
@@ -82,7 +86,7 @@ export function ProjectDetailLayout({
             description={galleryDescription}
           />
           <div className="mt-12">
-            <ProjectGallery media={project.media} title={project.title} />
+            <ProjectGallery media={galleryMedia} title={project.title} />
           </div>
         </div>
       </section>

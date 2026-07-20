@@ -1,188 +1,238 @@
-import type { Project } from "@/types/project";
+import type {
+  CategorySlug,
+  Project,
+  ProjectSeo,
+  ProjectStatus,
+} from "@/types/project";
+import type {
+  StrapiCollectionResponse,
+  StrapiProject,
+  StrapiSeo,
+} from "@/types/strapi";
+import {
+  fetchStrapiData,
+  getStrapiMediaUrl,
+  logStrapiError,
+  type StrapiQuery,
+} from "@/lib/strapi";
+import {
+  normalizeCoverImage,
+  normalizeStrapiMedia,
+  unwrapStrapiMedia,
+} from "@/lib/media";
 
 /**
- * Sample project data — at least two projects per category so the listing
- * and detail pages can be built and tested in later phases.
+ * ── Strapi `project` schema (verified against the live API) ─────────────
  *
- * Each project carries a `media` array of images and/or videos. Image paths
- * point to the monochrome SVG placeholders in `/public/placeholder` (and a
- * few first-party PNGs); video items would add `type: "video"` with an
- * optional `thumbnail` poster.
+ * Collection `project` (API ID plural: `projects`)
+ *   - title            Text
+ *   - slug             UID
+ *   - year             Text             → mapped to Project.dateOfCompletion
+ *   - project_status   Enumeration      (e.g. "completed", "in progress")
+ *   - practice_category Relation        → practice-category
+ *   - coverImage       Media (single)
+ *   - project_media    Repeatable component:
+ *       { type: enum, title, alt, src: Media, src_thumbnail: Media }
+ *
+ * The frontend `Project` type also carries `shortDescription`, `description`,
+ * `location`, `area`, `projectType` and `seo`. These do NOT yet exist on the
+ * Strapi content type — the normalizer defaults them gracefully. When you add
+ * them in Strapi they flow through automatically (this file fetches all
+ * scalar fields; see `listingQuery`). For `seo`, also un-comment the populate
+ * line in `DETAIL_POPULATE`.
+ *
+ * IMPORTANT:
+ *   - Strapi's public role (or the API token) must allow `find` + `findOne`
+ *     on `project` and `practice-category`.
+ *   - Requesting `fields`/`populate` for an attribute that does NOT exist
+ *     makes Strapi return HTTP 400. Only reference fields that exist.
+ * ────────────────────────────────────────────────────────────────────────
  */
-export const projects: Project[] = [
-  // ---------- Architecture ----------
-  {
-    title: "Alibuag Police HQ",
-    slug: "alibuag-police-HQ",
-    category: "architecture",
-    location: "Cornwall, United Kingdom",
-    area: "480 m²",
-    dateOfCompletion: "2024",
-    // status: "Completed",
-    media: [
-      { type: "image", src: "/architecture/alibuag_police_hq/FFLR.jpg", alt: "House on the Cliff project image" },
-      { type: "image", src: "/architecture/alibuag_police_hq/GFLR MAIN.jpg", alt: "House on the Cliff project image" },
-    ],
-  },
-  {
-    title: "Control Room and Command Center Building at CBD for Navi Mumbai Police",
-    slug: "control-room-and-command-center-building-at-CBD-for-navi-mumbai-police",
-    category: "architecture",
-    location: "Lake District, United Kingdom",
-    area: "640 m²",
-    dateOfCompletion: "2025",
-    // status: "In Progress",
-    media: [
-      { type: "image", src: "/architecture/Control Room and Command Center Building at CBD for Navi Mumbai Police/CC2.jpg", alt: "The Sequoia Pavilion project image" },
-      { type: "image", src: "/architecture/Control Room and Command Center Building at CBD for Navi Mumbai Police/CC8.jpg", alt: "The Sequoia Pavilion project image" },
-      { type: "image", src: "/architecture/Control Room and Command Center Building at CBD for Navi Mumbai Police/CC3.jpg", alt: "The Sequoia Pavilion project image" },
-      { type: "image", src: "/architecture/Control Room and Command Center Building at CBD for Navi Mumbai Police/CC1  MAIN.jpg", alt: "The Sequoia Pavilion project image" },
-      { type: "image", src: "/architecture/Control Room and Command Center Building at CBD for Navi Mumbai Police/CC7.jpg", alt: "The Sequoia Pavilion project image" },
-      { type: "image", src: "/architecture/Control Room and Command Center Building at CBD for Navi Mumbai Police/CC9.jpg", alt: "The Sequoia Pavilion project image" },
-      { type: "image", src: "/architecture/Control Room and Command Center Building at CBD for Navi Mumbai Police/image.png", alt: "The Sequoia Pavilion project image" },
-    ],
-  },
-  {
-    title: "Farmhouse at Gadeshwar - Mr. R. R. Beedu",
-    slug: "farmhouse-at-gadeshwar",
-    category: "architecture",
-    location: "Lake District, United Kingdom",
-    area: "640 m²",
-    dateOfCompletion: "2025",
-    // status: "In Progress",
-    media: [
-      {
-        type: "video",
-        src: "/architecture/farmhouse-at-gadeshwar/3.mp4",
-        thumbnail: "/architecture/farmhouse-at-gadeshwar/1.jpg",
-        title: "House on the Cliff project video",
-        alt: "House on the Cliff project video thumbnail",
-      },
-      { type: "image", src: "/architecture/farmhouse-at-gadeshwar/1.jpg", alt: "The Sequoia Pavilion project image" },
-      { type: "image", src: "/architecture/farmhouse-at-gadeshwar/2.jpg", alt: "The Sequoia Pavilion project image" },
-    ],
-  },
+const PROJECTS_ENDPOINT = "/projects";
+const PROJECT_DETAIL_REVALIDATE_SECONDS = 60;
 
-  // ---------- Interior ----------
-  {
-    title: "3 BHK house Interiors at Seawood",
-    slug: "3-BHK-house-interiors-at-seawood",
-    category: "interior",
-    location: "Edinburgh, United Kingdom",
-    area: "120 m²",
-    dateOfCompletion: "2023",
-    // status: "Completed",
-    media: [
-      { type: "image", src: "/interiors/three_bhk_seawoods/Picture13.jpg", alt: "The Reading Room project image" },
-      { type: "image", src: "/interiors/three_bhk_seawoods/Picture18.jpg", alt: "The Reading Room project image" },
-      { type: "image", src: "/interiors/three_bhk_seawoods/Picture17.jpg", alt: "The Reading Room project image" },
-      { type: "image", src: "/interiors/three_bhk_seawoods/Picture16.jpg", alt: "The Reading Room project image" },
-      { type: "image", src: "/interiors/three_bhk_seawoods/Picture15.jpg", alt: "The Reading Room project image" },
-    ],
-  },
-  {
-    title: "Control Room at Thane — for Thane City Police",
-    slug: "control-room-at-thane-for-thane-city-police",
-    category: "interior",
-    location: "Bath, United Kingdom",
-    area: "210 m²",
-    dateOfCompletion: "2025",
-    // status: "In Progress",
-    media: [
-      { type: "image", src: "/interiors/control_room_at_hane/2.jpg", alt: "Quarry House Interior project image" },
-      { type: "image", src: "/interiors/control_room_at_hane/1.jpg", alt: "Quarry House Interior project image" },
-      { type: "image", src: "/interiors/control_room_at_hane/3.jpg", alt: "Quarry House Interior project image" },
-      { type: "image", src: "/interiors/control_room_at_hane/4.jpg", alt: "Quarry House Interior project image" },
-      { type: "image", src: "/interiors/control_room_at_hane/5.jpg", alt: "Quarry House Interior project image" },
-      { type: "image", src: "/interiors/control_room_at_hane/6.jpg", alt: "Quarry House Interior project image" },
-      { type: "image", src: "/interiors/control_room_at_hane/7.jpg", alt: "Quarry House Interior project image" },
-      { type: "image", src: "/interiors/control_room_at_hane/8.jpg", alt: "Quarry House Interior project image" },
-      { type: "image", src: "/interiors/control_room_at_hane/9.jpg", alt: "Quarry House Interior project image" },
-      { type: "image", src: "/interiors/control_room_at_hane/10.jpg", alt: "Quarry House Interior project image" },
-      { type: "image", src: "/interiors/control_room_at_hane/11.jpg", alt: "Quarry House Interior project image" },
-    ],
-  },
+/**
+ * Lean populate for listings. No `fields` filter on the project itself —
+ * Strapi returns every scalar by default, so newly-added fields (location,
+ * shortDescription, …) appear with no code change here.
+ */
+const LIST_POPULATE = {
+  practice_category: { fields: ["title", "slug"] },
+  coverImage: { fields: ["url", "alternativeText", "width", "height"] },
+};
 
-  // ---------- Planning ----------
-  {
-    title: "Daund",
-    slug: "daund",
-    category: "planning",
-    location: "Porto, Portugal",
-    area: "18 hectares",
-    dateOfCompletion: "2024",
-    // status: "Completed",
-    media: [
-      { type: "image", src: "/planning/daund/4.jpg", alt: "Riverside District Masterplan project image" },
-      { type: "image", src: "/planning/daund/11.jpg", alt: "Riverside District Masterplan project image" },
-      { type: "image", src: "/planning/daund/1.jpg", alt: "Riverside District Masterplan project image" },
-      { type: "image", src: "/planning/daund/2.jpg", alt: "Riverside District Masterplan project image" },
-      { type: "image", src: "/planning/daund/3.jpg", alt: "Riverside District Masterplan project image" },
-      { type: "image", src: "/planning/daund/5.jpg", alt: "Riverside District Masterplan project image" },
-      { type: "image", src: "/planning/daund/6.jpg", alt: "Riverside District Masterplan project image" },
-      { type: "image", src: "/planning/daund/7.jpg", alt: "Riverside District Masterplan project image" },
-      { type: "image", src: "/planning/daund/8.jpg", alt: "Riverside District Masterplan project image" },
-      { type: "image", src: "/planning/daund/9.jpg", alt: "Riverside District Masterplan project image" },
-      { type: "image", src: "/planning/daund/10.jpg", alt: "Riverside District Masterplan project image" },
-    ],
-  },
-  // {
-  //   title: "Old Town Renewal Framework",
-  //   slug: "old-town-renewal-framework",
-  //   category: "planning",
-  //   location: "Oslo, Norway",
-  //   area: "26 hectares",
-  //   dateOfCompletion: "2026",
-  //   // status: "In Progress",
-  //   media: [
-  //     { type: "image", src: "/placeholder/04.svg", alt: "Old Town Renewal Framework project image" },
-  //     { type: "image", src: "/placeholder/02.svg", alt: "Old Town Renewal Framework project image" },
-  //     { type: "image", src: "/placeholder/06.svg", alt: "Old Town Renewal Framework project image" },
-  //   ],
-  // },
+/** Full populate for a single project detail page. */
+const DETAIL_POPULATE = {
+  practice_category: { fields: ["title", "slug", "description"] },
+  coverImage: true,
+  project_media: { populate: { src: true, src_thumbnail: true } },
+  // Add once a `seo` component exists on the Project type:
+  // seo: { populate: { metaImage: true } },
+};
 
-  // ---------- Landscape ----------
-  {
-    title: "Headland Garden",
-    slug: "headland-garden",
-    category: "landscape",
-    location: "Cornwall, United Kingdom",
-    area: "1.2 hectares",
-    dateOfCompletion: "2023",
-    // status: "Completed",
-    media: [
-      { type: "image", src: "/placeholder/05.svg", alt: "Headland Garden project image" },
-      { type: "image", src: "/placeholder/04.svg", alt: "Headland Garden project image" },
-      { type: "image", src: "/placeholder/03.svg", alt: "Headland Garden project image" },
-    ],
-  },
-  {
-    title: "Civic Square Landscape",
-    slug: "civic-square-landscape",
-    category: "landscape",
-    location: "Helsinki, Finland",
-    area: "0.8 hectares",
-    dateOfCompletion: "2025",
-    // status: "In Progress",
-    media: [
-      { type: "image", src: "/placeholder/01.svg", alt: "Civic Square Landscape project image" },
-      { type: "image", src: "/placeholder/06.svg", alt: "Civic Square Landscape project image" },
-      { type: "image", src: "/placeholder/02.svg", alt: "Civic Square Landscape project image" },
-    ],
-  },
-];
+/* ── Normalizers ───────────────────────────────────────────────────────── */
 
-/** All projects belonging to a given category slug. */
-export function getProjectsByCategory(category: string): Project[] {
-  return projects.filter((project) => project.category === category);
+/** Maps a Strapi `project_status` value onto the frontend status union. */
+function normalizeStatus(value: StrapiProject["project_status"]): ProjectStatus {
+  const text = String(value ?? "").toLowerCase();
+  if (text.includes("progress") || text.includes("ongoing")) {
+    return "In Progress";
+  }
+  // "completed", unknown values, and empties all settle on "Completed".
+  return "Completed";
 }
 
-/** A single project matched by both its category and slug. */
-export function getProject(
-  category: string,
-  slug: string,
-): Project | undefined {
-  return projects.find(
-    (project) => project.category === category && project.slug === slug,
-  );
+/** Maps a Strapi `shared.seo` component onto the frontend `ProjectSeo`. */
+function normalizeSeo(
+  seo: StrapiSeo | null | undefined,
+): ProjectSeo | undefined {
+  if (!seo) return undefined;
+  const metaImage = unwrapStrapiMedia(seo.metaImage);
+
+  return {
+    title: seo.metaTitle ?? undefined,
+    description: seo.metaDescription ?? undefined,
+    canonicalUrl: seo.canonicalURL ?? undefined,
+    ogImage: metaImage?.url ? getStrapiMediaUrl(metaImage.url) : undefined,
+  };
+}
+
+/**
+ * Maps a raw Strapi project onto the frontend `Project`. Cover and gallery
+ * media stay separate so listing queries can omit `project_media` without
+ * changing the meaning of the gallery field.
+ */
+export function normalizeProject(entry: StrapiProject): Project {
+  const category = entry.practice_category ?? null;
+
+  const cover = normalizeCoverImage(entry.coverImage);
+  const rawGallery = Array.isArray(entry.project_media)
+    ? entry.project_media
+    : [];
+  const gallery = rawGallery
+    .map(normalizeStrapiMedia)
+    .filter((item): item is NonNullable<typeof item> => item !== null);
+
+  return {
+    documentId: entry.documentId,
+    title: entry.title,
+    slug: entry.slug,
+    // The slug is validated against the route in the page component.
+    category: (category?.slug ?? "architecture") as CategorySlug,
+    categoryLabel: category?.label ?? category?.title ?? undefined,
+    shortDescription: entry.shortDescription ?? "",
+    description: entry.description ?? "",
+    location: entry.location ?? "",
+    area: entry.area ?? "",
+    dateOfCompletion: entry.year != null ? String(entry.year) : "",
+    status: normalizeStatus(entry.project_status),
+    projectType: entry.projectType ?? undefined,
+    coverImage: cover,
+    project_media: gallery,
+    seo: normalizeSeo(entry.seo),
+  };
+}
+
+/* ── Shared query helper ───────────────────────────────────────────────── */
+
+/** Builds a listing query, optionally merging extra filters. */
+function listingQuery(extra: StrapiQuery = {}): StrapiQuery {
+  return {
+    populate: LIST_POPULATE,
+    sort: ["year:desc"],
+    pagination: { pageSize: 100 },
+    ...extra,
+  };
+}
+
+/* ── Data functions ────────────────────────────────────────────────────── */
+
+/** Every project, newest first. Returns `[]` if Strapi is unreachable. */
+export async function getProjects(): Promise<Project[]> {
+  try {
+    const res = await fetchStrapiData<StrapiCollectionResponse<StrapiProject>>(
+      PROJECTS_ENDPOINT,
+      { query: listingQuery(), tags: ["projects"] },
+    );
+    return res.data.map(normalizeProject);
+  } catch (error) {
+    logStrapiError("getProjects", error);
+    return [];
+  }
+}
+
+/** Projects belonging to a category, by category slug. */
+export async function getProjectsByCategory(
+  categorySlug: string,
+): Promise<Project[]> {
+  try {
+    const res = await fetchStrapiData<StrapiCollectionResponse<StrapiProject>>(
+      PROJECTS_ENDPOINT,
+      {
+        query: listingQuery({
+          filters: { practice_category: { slug: { $eq: categorySlug } } },
+        }),
+        tags: ["projects", `category:${categorySlug}`],
+      },
+    );
+    return res.data.map(normalizeProject);
+  } catch (error) {
+    logStrapiError(`getProjectsByCategory(${categorySlug})`, error);
+    return [];
+  }
+}
+
+/** A single fully-populated project by slug, or `null` if not found. */
+export async function getProjectBySlug(slug: string): Promise<Project | null> {
+  try {
+    const res = await fetchStrapiData<StrapiCollectionResponse<StrapiProject>>(
+      PROJECTS_ENDPOINT,
+      {
+        query: {
+          filters: { slug: { $eq: slug } },
+          populate: DETAIL_POPULATE,
+          pagination: { pageSize: 1 },
+        },
+        tags: ["projects", `project:${slug}`],
+        revalidate: PROJECT_DETAIL_REVALIDATE_SECONDS,
+      },
+    );
+    const entry = res.data[0];
+    return entry ? normalizeProject(entry) : null;
+  } catch (error) {
+    logStrapiError(`getProjectBySlug(${slug})`, error);
+    return null;
+  }
+}
+
+/**
+ * `{ category, slug }` pairs for every project — feeds `generateStaticParams`
+ * on `/[category]/[slug]`. Returns `[]` on failure so the build never breaks;
+ * unknown routes then render on-demand (ISR) instead of being pre-rendered.
+ */
+export async function getProjectSlugs(): Promise<
+  { category: string; slug: string }[]
+> {
+  try {
+    const res = await fetchStrapiData<StrapiCollectionResponse<StrapiProject>>(
+      PROJECTS_ENDPOINT,
+      {
+        query: {
+          fields: ["slug"],
+          populate: { practice_category: { fields: ["slug"] } },
+          pagination: { pageSize: 200 },
+        },
+        tags: ["projects"],
+      },
+    );
+    return res.data
+      .filter((p) => Boolean(p.slug) && Boolean(p.practice_category?.slug))
+      .map((p) => ({
+        category: p.practice_category!.slug,
+        slug: p.slug,
+      }));
+  } catch (error) {
+    logStrapiError("getProjectSlugs", error);
+    return [];
+  }
 }

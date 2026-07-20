@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Project } from "@/types/project";
-import { getCategory } from "@/lib/categories";
 import { getProjectCover } from "@/lib/media";
 // import { StatusBadge } from "@/components/ui/StatusBadge";
 
@@ -16,8 +15,9 @@ export function ProjectCard({
   index,
   imageSizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
 }: ProjectCardProps) {
-  const category = getCategory(project.category);
-  const categoryLabel = category?.label ?? project.category;
+  // Label is denormalized onto the project (see lib/projects.ts), so the
+  // card needs no category lookup.
+  const categoryLabel = project.categoryLabel ?? project.category;
 
   return (
     <Link

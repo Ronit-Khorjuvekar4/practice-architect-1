@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { categories } from "@/lib/categories";
-import { Logo } from "@/components/ui/Logo";
 import Image from "next/image";
+import type { Category } from "@/types/project";
+import { Logo } from "@/components/ui/Logo";
 
 const contactLines = [
   "practicearchitects309@gmail.com  practicearchitects310@gmail.com",
@@ -10,7 +10,12 @@ const contactLines = [
   "Bhoomi Mall, CBD Belapur, Navi Mumbai - 400614",
 ];
 
-export function Footer() {
+type FooterProps = {
+  /** Practice categories, supplied by the root layout (Strapi-backed). */
+  categories: Category[];
+};
+
+export function Footer({ categories }: FooterProps) {
   const year = new Date().getFullYear();
 
   return (
