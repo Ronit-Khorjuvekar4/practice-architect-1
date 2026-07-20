@@ -149,7 +149,7 @@ export function AchievementsCarousel() {
       <section className="border-b border-line-strong bg-panel">
         <div className="mx-auto max-w-[1360px] px-6 py-20 md:px-14 md:py-28">
           <SectionHeading
-            index="03"
+            index="02"
             eyebrow="Recognitions"
             title="Photo Gallery"
           />
