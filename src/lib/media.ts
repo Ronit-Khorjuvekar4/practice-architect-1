@@ -23,18 +23,22 @@ export function isVideoMedia(media: ProjectMedia): media is VideoProjectMedia {
 }
 
 /**
- * Resolves a single still image for use in cards and thumbnail strips,
- * where a `<video>` element is not appropriate. Prefers the first image,
- * then any video poster, and finally a shipped placeholder so callers
- * always receive a valid `next/image` source.
+ * Resolves a single still image for project cards and metadata. Prefers the
+ * dedicated cover, then gallery media, and finally a shipped placeholder so
+ * callers always receive a valid `next/image` source without merging the
+ * cover into the gallery.
  */
 export function getProjectCover(project: Project): string {
-  const firstImage = project.media.find(isImageMedia);
+  if (project.coverImage?.src) {
+    return project.coverImage.src;
+  }
+
+  const firstImage = project.project_media.find(isImageMedia);
   if (firstImage) {
     return firstImage.src;
   }
 
-  const posterVideo = project.media.find(
+  const posterVideo = project.project_media.find(
     (media) => media.type === "video" && media.thumbnail,
   );
   if (posterVideo?.thumbnail) {
@@ -74,8 +78,12 @@ export function unwrapStrapiMedia(
  * - Relative `/uploads/*` URLs become absolute; absolute URLs pass through.
  */
 export function normalizeStrapiMedia(
-  item: StrapiProjectMediaComponent,
+  item: StrapiProjectMediaComponent | null | undefined,
 ): ProjectMedia | null {
+  if (!item) {
+    return null;
+  }
+
   const file = unwrapStrapiMedia(item.src);
   if (!file) {
     return null;

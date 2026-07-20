@@ -98,20 +98,20 @@ function normalizeSeo(
 }
 
 /**
- * Maps a raw Strapi project onto the frontend `Project`. Tolerates partial
- * data: a listing query (no `project_media`) yields `media` containing just
- * the cover; a detail query yields cover + full gallery.
+ * Maps a raw Strapi project onto the frontend `Project`. Cover and gallery
+ * media stay separate so listing queries can omit `project_media` without
+ * changing the meaning of the gallery field.
  */
 export function normalizeProject(entry: StrapiProject): Project {
   const category = entry.practice_category ?? null;
 
   const cover = normalizeCoverImage(entry.coverImage);
-  const gallery = (entry.project_media ?? [])
+  const rawGallery = Array.isArray(entry.project_media)
+    ? entry.project_media
+    : [];
+  const gallery = rawGallery
     .map(normalizeStrapiMedia)
     .filter((item): item is NonNullable<typeof item> => item !== null);
-
-  // Cover leads the gallery so `getProjectCover` and the hero pick it first.
-  const media = cover ? [cover, ...gallery] : gallery;
 
   return {
     documentId: entry.documentId,
@@ -127,7 +127,8 @@ export function normalizeProject(entry: StrapiProject): Project {
     dateOfCompletion: entry.year != null ? String(entry.year) : "",
     status: normalizeStatus(entry.project_status),
     projectType: entry.projectType ?? undefined,
-    media,
+    coverImage: cover,
+    project_media: gallery,
     seo: normalizeSeo(entry.seo),
   };
 }

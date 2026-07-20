@@ -3,6 +3,7 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { BackToTopButton } from "@/components/ui/BackToTopButton";
+import { MediaProtection } from "@/components/ui/MediaProtection";
 import { getCategories } from "@/lib/categories";
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className="flex min-h-screen flex-col bg-paper text-ink antialiased">
+        <MediaProtection />
         <Navbar categories={categories} />
         <main className="flex-1">{children}</main>
         <Footer categories={categories} />

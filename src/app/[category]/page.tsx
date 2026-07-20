@@ -52,8 +52,6 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     notFound();
   }
   
-  console.log("categoryData:",categoryData)
-
   return (
     <ProjectListingPage
       category={categoryData}

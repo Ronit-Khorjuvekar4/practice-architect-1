@@ -52,7 +52,10 @@ export type Project = {
   area: string;
   dateOfCompletion: string;
   status: ProjectStatus;
-  media: ProjectMedia[];
+  /** Featured image used by project cards, metadata, and hero treatments. */
+  coverImage: ProjectMedia | null;
+  /** Gallery media from Strapi's `project_media` repeatable component only. */
+  project_media: ProjectMedia[];
   /** Strapi v5 stable identifier — handy for cache tags and previews. */
   documentId?: string;
   /** Human-readable category name, denormalized so cards need no lookup. */
