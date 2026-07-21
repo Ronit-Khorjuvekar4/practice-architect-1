@@ -30,7 +30,7 @@ export async function generateMetadata({
 
   return {
     title: categoryData.title,
-    description: categoryData.description,
+    description: "Practice Architects",
   };
 }
 

@@ -97,8 +97,9 @@ export interface StrapiCategory {
   title: string;
   slug: string;
   label?: string | null;
-  description?: string | null;
-  image?: StrapiMediaField;
+  // description?: string | null;
+  /** Single media field (populated). */
+  bannerImage?: StrapiMediaField;
 }
 
 /** A `project` collection entry (Strapi v5, flattened). */
@@ -123,4 +124,21 @@ export interface StrapiProject {
   coverImage?: StrapiMediaField;
   /** Optional shared.seo component (populated). */
   seo?: StrapiSeo | null;
+}
+
+/** A `photo-gallery` collection entry (Strapi v5, flattened). */
+export interface StrapiPhotoGalleryEntry {
+  id: number;
+  documentId?: string;
+  /** Single media field (populated). */
+  gallery_image?: StrapiMedia | null;
+}
+
+/** A `competition` collection entry (Strapi v5, flattened). */
+export interface StrapiCompetitionEntry {
+  id: number;
+  documentId?: string;
+  name?: string | null;
+  /** Multiple-media field (populated). */
+  competition_image?: (StrapiMedia | null)[] | null;
 }

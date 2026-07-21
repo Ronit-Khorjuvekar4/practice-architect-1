@@ -16,12 +16,11 @@ import { unwrapStrapiMedia } from "@/lib/media";
  *   - title        Text
  *   - slug         UID
  *   - description  Text
+ *   - bannerImage  Media (single)
  *
- * `label` and `image` do NOT exist on the content type yet, so they are not
- * requested here (Strapi returns HTTP 400 for unknown fields). `normalizeCategory`
- * fills `label` from `title` and `img` from the static defaults below. If you
- * add a `label` text field / `image` media field in Strapi, also re-add them
- * to the queries.
+ * `label` does not exist on the content type, so `normalizeCategory` fills it
+ * from `title`. Local images remain fallbacks for entries without a valid
+ * populated `bannerImage`.
  */
 const PRACTICE_CATEGORIES_ENDPOINT = "/practice-categories";
 
@@ -35,32 +34,36 @@ const CATEGORY_DEFAULTS: Record<CategorySlug, Category> = {
     slug: "architecture",
     label: "Architecture",
     title: "Architecture Portfolio",
-    description:
-      "Built and unbuilt architectural work across residential, civic and cultural typologies — from small interventions to masterplanned districts.",
+    // description:
+    //   "Built and unbuilt architectural work across residential, civic and cultural typologies — from small interventions to masterplanned districts.",
+    bannerImage: null,
     img:"/home/Architeture.jpg"
   },
   interior: {
     slug: "interior",
     label: "Interior",
     title: "Interior Portfolio",
-    description:
-      "Interior commissions spanning hospitality, retail and residential — material-led, atmosphere-first, never decorative.",
+    // description:
+    //   "Interior commissions spanning hospitality, retail and residential — material-led, atmosphere-first, never decorative.",
+    bannerImage: null,
     img:"/home/Interiour.jpg"
   },
   planning: {
     slug: "planning",
     label: "Planning",
     title: "Planning Portfolio",
-    description:
-      "Urban planning, masterplanning and feasibility studies — neighbourhood-scale work that knits architecture to its city.",
+    // description:
+    //   "Urban planning, masterplanning and feasibility studies — neighbourhood-scale work that knits architecture to its city.",
+    bannerImage: null,
     img:"/home/planningg.png" 
   },
   landscape: {
     slug: "landscape",
     label: "Landscape",
     title: "Landscape Portfolio",
-    description:
-      "Landscape, garden and public-realm design — sites read first as terrain, then as plan.",
+    // description:
+    //   "Landscape, garden and public-realm design — sites read first as terrain, then as plan.",
+    bannerImage: null,
     img:"/home/landscape.jpg"
   },
 };
@@ -70,24 +73,44 @@ const CATEGORY_DEFAULTS: Record<CategorySlug, Category> = {
  * so a `label` field added later flows through with no code change.
  */
 const CATEGORY_QUERY = {
-  sort: ["title:asc"],
+  populate: {
+    bannerImage: {
+      fields: ["url", "alternativeText", "width", "height"],
+    },
+  },
+  sort: ["createdAt:asc"],
   pagination: { pageSize: 50 },
 } as const;
+
+function optionalDimension(value: number | null | undefined) {
+  return typeof value === "number" && Number.isFinite(value) && value > 0
+    ? value
+    : undefined;
+}
 
 /** Maps a raw Strapi category onto the frontend `Category`, filling gaps. */
 function normalizeCategory(entry: StrapiCategory): Category {
   const slug = entry.slug as CategorySlug;
   const fallback = CATEGORY_DEFAULTS[slug];
-  const image = unwrapStrapiMedia(entry.image);
+  const banner = unwrapStrapiMedia(entry.bannerImage);
+  const bannerUrl = getStrapiMediaUrl(banner?.url);
 
   return {
     slug,
     label: entry.label ?? entry.title ?? fallback?.label ?? slug,
     title: entry.title ?? fallback?.title ?? slug,
-    description: entry.description ?? fallback?.description ?? "",
-    img: image?.url
-      ? getStrapiMediaUrl(image.url)
-      : (fallback?.img ?? "/placeholder/01.svg"),
+    // description: entry.description ?? fallback?.description ?? "",
+    bannerImage: bannerUrl
+      ? {
+          id: banner?.documentId ?? banner?.id,
+          url: bannerUrl,
+          alternativeText:
+            banner?.alternativeText?.trim() || `${entry.title} banner`,
+          width: optionalDimension(banner?.width),
+          height: optionalDimension(banner?.height),
+        }
+      : null,
+    img: fallback?.img ?? "/placeholder/01.svg",
   };
 }
 
@@ -118,6 +141,7 @@ export async function getCategoryBySlug(
       {
         query: {
           filters: { slug: { $eq: slug } },
+          populate: CATEGORY_QUERY.populate,
           pagination: { pageSize: 1 },
         },
         tags: ["categories", `category:${slug}`],

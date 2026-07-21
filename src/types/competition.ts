@@ -2,24 +2,12 @@ export type CompetitionImage = {
   id: string;
   src: string;
   alt: string;
+  width?: number;
+  height?: number;
 };
 
-export type CompetitionSummary = {
+export type Competition = {
   id: string;
-  slug: string;
-  title: string;
-  type: string;
-  year: string;
-  location?: string;
-  coverImage: CompetitionImage;
-  imageCount: number;
-};
-
-export type CompetitionDetails = CompetitionSummary & {
+  name: string;
   images: CompetitionImage[];
-};
-
-export type CompetitionPage = {
-  items: CompetitionSummary[];
-  nextCursor: string | null;
 };

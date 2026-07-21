@@ -1,20 +1,15 @@
 import { CompetitionBrowser } from "@/components/competition/CompetitionBrowser";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import {
-  getCompetitionDetails,
-  getCompetitionPage,
-} from "@/lib/competitions";
+import type { Competition } from "@/types/competition";
 
-const INITIAL_PAGE_SIZE = 25;
+type CompetitionsSectionProps = {
+  competitions: Competition[];
+};
 
-export function CompetitionsSection() {
-  const initialPage = getCompetitionPage({ limit: INITIAL_PAGE_SIZE });
-  const initialCompetition = initialPage.items[0];
-
-  if (!initialCompetition) return null;
-
-  const initialDetails = getCompetitionDetails(initialCompetition.id);
-  if (!initialDetails) return null;
+export function CompetitionsSection({
+  competitions,
+}: CompetitionsSectionProps) {
+  if (competitions.length === 0) return null;
 
   return (
     <section className="border-b border-line-strong bg-paper">
@@ -26,10 +21,7 @@ export function CompetitionsSection() {
           description="Open, invited and international competition entries from the studio archive."
         />
 
-        <CompetitionBrowser
-          initialPage={initialPage}
-          initialDetails={initialDetails}
-        />
+        <CompetitionBrowser competitions={competitions} />
       </div>
     </section>
   );
