@@ -173,7 +173,7 @@ export function AchievementsCarousel({ images }: AchievementsCarouselProps) {
                 {String(total).padStart(2, "0")}
               </span>
 
-              <div className="hidden gap-2 sm:flex" aria-hidden="true">
+              {/* <div className="hidden gap-2 sm:flex" aria-hidden="true">
                 {indicatorIndexes.map((index) => (
                   <button
                     key={images[index].id}
@@ -190,7 +190,7 @@ export function AchievementsCarousel({ images }: AchievementsCarouselProps) {
                     )}
                   />
                 ))}
-              </div>
+              </div> */}
 
               <div className="flex gap-3">
                 <button

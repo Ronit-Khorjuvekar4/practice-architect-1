@@ -2,18 +2,10 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
-import type {
-  CompetitionDetails,
-  CompetitionImage,
-  CompetitionSummary,
-} from "@/types/competition";
+import type { Competition, CompetitionImage } from "@/types/competition";
 
 type CompetitionStageProps = {
-  summary: CompetitionSummary;
-  details: CompetitionDetails | null;
-  isLoading: boolean;
-  error: string | null;
-  onRetry: () => void;
+  competition: Competition;
 };
 
 function StageImage({ image }: { image: CompetitionImage }) {
@@ -34,37 +26,29 @@ function StageImage({ image }: { image: CompetitionImage }) {
   );
 }
 
-export function CompetitionStage({
-  summary,
-  details,
-  isLoading,
-  error,
-  onRetry,
-}: CompetitionStageProps) {
+export function CompetitionStage({ competition }: CompetitionStageProps) {
   const [imageIndex, setImageIndex] = useState(0);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
-  const images = details?.images ?? [summary.coverImage];
-  const safeIndex = Math.min(imageIndex, images.length - 1);
-  const currentImage = images[safeIndex];
-  const hasMultipleImages = images.length > 1;
-  const displayedTotal = details?.images.length ?? summary.imageCount;
+  const safeIndex = Math.min(imageIndex, competition.images.length - 1);
+  const currentImage = competition.images[safeIndex];
+  const hasMultipleImages = competition.images.length > 1;
 
   const showPrevious = () => {
     setImageIndex((current) =>
-      current === 0 ? images.length - 1 : current - 1,
+      current === 0 ? competition.images.length - 1 : current - 1,
     );
   };
 
   const showNext = () => {
     setImageIndex((current) =>
-      current === images.length - 1 ? 0 : current + 1,
+      current === competition.images.length - 1 ? 0 : current + 1,
     );
   };
 
   return (
     <article
       tabIndex={0}
-      aria-label={`${summary.title} competition gallery`}
+      aria-label={`${competition.name} competition gallery`}
       onKeyDown={(event) => {
         if (!hasMultipleImages) return;
 
@@ -113,7 +97,7 @@ export function CompetitionStage({
             <button
               type="button"
               onClick={showPrevious}
-              aria-label={`Show previous image for ${summary.title}`}
+              aria-label={`Show previous image for ${competition.name}`}
               className="flex h-11 w-11 items-center justify-center border border-line-strong bg-paper/90 text-white backdrop-blur transition-colors hover:border-accent hover:bg-accent hover:text-button-text"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
@@ -123,7 +107,7 @@ export function CompetitionStage({
             <button
               type="button"
               onClick={showNext}
-              aria-label={`Show next image for ${summary.title}`}
+              aria-label={`Show next image for ${competition.name}`}
               className="flex h-11 w-11 items-center justify-center border border-line-strong bg-paper/90 text-white backdrop-blur transition-colors hover:border-accent hover:bg-accent hover:text-button-text"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
@@ -132,33 +116,12 @@ export function CompetitionStage({
             </button>
           </div>
         )}
-
-        {isLoading && (
-          <span role="status" className="absolute left-4 top-4 z-10 border border-line-strong bg-paper/90 px-3 py-2 font-mono text-[9px] uppercase tracking-[0.16em] text-muted backdrop-blur">
-            Loading gallery…
-          </span>
-        )}
-
-        {error && (
-          <div role="alert" className="absolute inset-x-4 top-4 z-10 flex items-center justify-between gap-4 border border-line-strong bg-paper/95 p-3 backdrop-blur sm:inset-x-auto sm:left-5 sm:right-5">
-            <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted">
-              Gallery unavailable
-            </span>
-            <button
-              type="button"
-              onClick={onRetry}
-              className="font-mono text-[10px] uppercase tracking-[0.14em] text-white underline underline-offset-4"
-            >
-              Retry
-            </button>
-          </div>
-        )}
       </div>
 
       <footer className="grid gap-5 border-t border-line-strong p-5 sm:grid-cols-[1fr_auto] sm:items-end sm:p-6">
         <div className="min-w-0">
           <h3 aria-live="polite" className="mt-2 truncate font-serif text-2xl uppercase leading-tight text-white sm:text-3xl">
-            {summary.title}
+            {competition.name}
           </h3>
         </div>
         <span
@@ -166,7 +129,7 @@ export function CompetitionStage({
           className="font-mono text-[11px] tracking-[0.2em] text-muted"
         >
           {String(safeIndex + 1).padStart(2, "0")} /{" "}
-          {String(displayedTotal).padStart(2, "0")}
+          {String(competition.images.length).padStart(2, "0")}
         </span>
       </footer>
     </article>

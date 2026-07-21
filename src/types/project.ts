@@ -27,7 +27,7 @@ export type Category = {
   slug: CategorySlug;
   label: string;
   title: string;
-  description: string;
+  // description: string;
   bannerImage: CategoryBannerImage | null;
   /** Local fallback used only when Strapi has no valid banner image. */
   img: string;

@@ -97,7 +97,7 @@ export interface StrapiCategory {
   title: string;
   slug: string;
   label?: string | null;
-  description?: string | null;
+  // description?: string | null;
   /** Single media field (populated). */
   bannerImage?: StrapiMediaField;
 }
@@ -132,4 +132,13 @@ export interface StrapiPhotoGalleryEntry {
   documentId?: string;
   /** Single media field (populated). */
   gallery_image?: StrapiMedia | null;
+}
+
+/** A `competition` collection entry (Strapi v5, flattened). */
+export interface StrapiCompetitionEntry {
+  id: number;
+  documentId?: string;
+  name?: string | null;
+  /** Multiple-media field (populated). */
+  competition_image?: (StrapiMedia | null)[] | null;
 }

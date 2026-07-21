@@ -34,8 +34,8 @@ const CATEGORY_DEFAULTS: Record<CategorySlug, Category> = {
     slug: "architecture",
     label: "Architecture",
     title: "Architecture Portfolio",
-    description:
-      "Built and unbuilt architectural work across residential, civic and cultural typologies — from small interventions to masterplanned districts.",
+    // description:
+    //   "Built and unbuilt architectural work across residential, civic and cultural typologies — from small interventions to masterplanned districts.",
     bannerImage: null,
     img:"/home/Architeture.jpg"
   },
@@ -43,8 +43,8 @@ const CATEGORY_DEFAULTS: Record<CategorySlug, Category> = {
     slug: "interior",
     label: "Interior",
     title: "Interior Portfolio",
-    description:
-      "Interior commissions spanning hospitality, retail and residential — material-led, atmosphere-first, never decorative.",
+    // description:
+    //   "Interior commissions spanning hospitality, retail and residential — material-led, atmosphere-first, never decorative.",
     bannerImage: null,
     img:"/home/Interiour.jpg"
   },
@@ -52,8 +52,8 @@ const CATEGORY_DEFAULTS: Record<CategorySlug, Category> = {
     slug: "planning",
     label: "Planning",
     title: "Planning Portfolio",
-    description:
-      "Urban planning, masterplanning and feasibility studies — neighbourhood-scale work that knits architecture to its city.",
+    // description:
+    //   "Urban planning, masterplanning and feasibility studies — neighbourhood-scale work that knits architecture to its city.",
     bannerImage: null,
     img:"/home/planningg.png" 
   },
@@ -61,8 +61,8 @@ const CATEGORY_DEFAULTS: Record<CategorySlug, Category> = {
     slug: "landscape",
     label: "Landscape",
     title: "Landscape Portfolio",
-    description:
-      "Landscape, garden and public-realm design — sites read first as terrain, then as plan.",
+    // description:
+    //   "Landscape, garden and public-realm design — sites read first as terrain, then as plan.",
     bannerImage: null,
     img:"/home/landscape.jpg"
   },
@@ -78,7 +78,7 @@ const CATEGORY_QUERY = {
       fields: ["url", "alternativeText", "width", "height"],
     },
   },
-  sort: ["title:asc"],
+  sort: ["createdAt:asc"],
   pagination: { pageSize: 50 },
 } as const;
 
@@ -99,7 +99,7 @@ function normalizeCategory(entry: StrapiCategory): Category {
     slug,
     label: entry.label ?? entry.title ?? fallback?.label ?? slug,
     title: entry.title ?? fallback?.title ?? slug,
-    description: entry.description ?? fallback?.description ?? "",
+    // description: entry.description ?? fallback?.description ?? "",
     bannerImage: bannerUrl
       ? {
           id: banner?.documentId ?? banner?.id,
