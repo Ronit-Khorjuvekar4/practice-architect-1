@@ -12,6 +12,9 @@ type VideoProjectMedia = ProjectMedia & { type: "video" };
 /** Local placeholder used when a project has no usable image at all. */
 export const MEDIA_PLACEHOLDER = "/placeholder/01.svg";
 
+/** Gallery media loaded per page — matches the Strapi `gallery` endpoint. */
+export const GALLERY_PAGE_SIZE = 25;
+
 /** Narrows a media item to an image. */
 export function isImageMedia(media: ProjectMedia): media is ImageProjectMedia {
   return media.type === "image";

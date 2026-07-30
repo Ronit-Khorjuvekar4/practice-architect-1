@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Category, Project } from "@/types/project";
+import { GALLERY_PAGE_SIZE } from "@/lib/media";
 import { ProjectGallery } from "@/components/project/ProjectGallery";
 import { ProjectHeroMedia } from "@/components/project/ProjectHeroMedia";
 import { ProjectMetaGrid } from "@/components/project/ProjectMetaGrid";
@@ -86,7 +87,13 @@ export function ProjectDetailLayout({
             description={galleryDescription}
           />
           <div className="mt-12">
-            <ProjectGallery media={galleryMedia} title={project.title} />
+            <ProjectGallery
+              key={project.documentId ?? project.slug}
+              initialMedia={galleryMedia.slice(0, GALLERY_PAGE_SIZE)}
+              total={totalGalleryItems}
+              documentId={project.documentId ?? ""}
+              title={project.title}
+            />
           </div>
         </div>
       </section>

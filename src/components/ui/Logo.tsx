@@ -13,7 +13,7 @@ type LogoProps = {
  */
 export function Logo() {
   return (
-    <div className="relative h-[clamp(550px,7vw,68px)] w-[clamp(165px,18vw,235px)] shrink-0">
+    <div className="relative w-56 h-24 ">
       <Image
         src="/logo-tarns.webp"
         alt="Practice Architects mark"
