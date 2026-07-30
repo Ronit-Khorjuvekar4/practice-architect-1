@@ -2,8 +2,6 @@ import Link from "next/link";
 import type { Category, Project } from "@/types/project";
 import { GALLERY_PAGE_SIZE } from "@/lib/media";
 import { ProjectGallery } from "@/components/project/ProjectGallery";
-import { ProjectHeroMedia } from "@/components/project/ProjectHeroMedia";
-import { ProjectMetaGrid } from "@/components/project/ProjectMetaGrid";
 import { ButtonLink } from "@/components/ui/button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 // import { StatusBadge } from "@/components/ui/StatusBadge";

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Category } from "@/types/project";
-import { Logo } from "@/components/ui/Logo";
 
 const contactLines = [
   "practicearchitects309@gmail.com  practicearchitects310@gmail.com",

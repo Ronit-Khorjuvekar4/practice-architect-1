@@ -17,7 +17,6 @@ export function SectionHeading({
   index,
   eyebrow,
   title,
-  description,
 }: SectionHeadingProps) {
   return (
     <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-12">

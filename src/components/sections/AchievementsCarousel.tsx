@@ -9,22 +9,21 @@ import {
   type GalleryLightboxItem,
 } from "@/components/ui/GalleryLightbox";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { cn } from "@/lib/utils";
 import type { GalleryImage } from "@/types/photo-gallery";
 
 const CAROUSEL_IMAGE_SIZES =
   "(max-width: 639px) 78vw, (max-width: 1023px) 50vw, (max-width: 1360px) 25vw, 300px";
-const MAX_VISIBLE_INDICATORS = 12;
+// const MAX_VISIBLE_INDICATORS = 12;
 
-function getVisibleIndicatorIndexes(total: number, activeIndex: number) {
-  const visibleCount = Math.min(total, MAX_VISIBLE_INDICATORS);
-  const start = Math.min(
-    Math.max(activeIndex - Math.floor(visibleCount / 2), 0),
-    total - visibleCount,
-  );
+// function getVisibleIndicatorIndexes(total: number, activeIndex: number) {
+//   const visibleCount = Math.min(total, MAX_VISIBLE_INDICATORS);
+//   const start = Math.min(
+//     Math.max(activeIndex - Math.floor(visibleCount / 2), 0),
+//     total - visibleCount,
+//   );
 
-  return Array.from({ length: visibleCount }, (_, offset) => start + offset);
-}
+//   return Array.from({ length: visibleCount }, (_, offset) => start + offset);
+// }
 
 const AchievementSlides = memo(function AchievementSlides({
   images,
@@ -88,7 +87,7 @@ export function AchievementsCarousel({ images }: AchievementsCarouselProps) {
   );
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const indicatorIndexes = getVisibleIndicatorIndexes(total, activeIndex);
+  // const indicatorIndexes = getVisibleIndicatorIndexes(total, activeIndex);
   const lightboxMedia = useMemo<GalleryLightboxItem[]>(
     () =>
       images.map((image) => ({
@@ -127,12 +126,12 @@ export function AchievementsCarousel({ images }: AchievementsCarouselProps) {
     }
   }, [emblaApi, lightboxIndex]);
 
-  const scrollTo = useCallback(
-    (index: number) => {
-      emblaApi?.scrollTo(index);
-    },
-    [emblaApi],
-  );
+  // const scrollTo = useCallback(
+  //   (index: number) => {
+  //     emblaApi?.scrollTo(index);
+  //   },
+  //   [emblaApi],
+  // );
 
   const scrollPrevious = useCallback(() => {
     emblaApi?.scrollPrev();

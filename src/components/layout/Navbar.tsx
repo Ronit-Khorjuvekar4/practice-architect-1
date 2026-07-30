@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { Category } from "@/types/project";
@@ -29,9 +29,11 @@ export function Navbar({ categories }: NavbarProps) {
       ? pathname === "/"
       : pathname === href || pathname.startsWith(`${href}/`);
 
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [pathname]);
+  // useEffect(() => {
+  //   setMenuOpen(false);
+  // }, [pathname]);
+
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <header className="sticky top-0 z-[999] border-b border-line bg-paper/90 backdrop-blur">
@@ -106,6 +108,7 @@ export function Navbar({ categories }: NavbarProps) {
               >
                 <Link
                   href={link.href}
+                  onClick={closeMenu}
                   aria-current={isActive(link.href) ? "page" : undefined}
                   className={cn(
                     "relative z-[1000] block w-full py-4 text-[13px] uppercase tracking-[0.14em] transition-colors",

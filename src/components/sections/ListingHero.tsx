@@ -11,7 +11,6 @@ type ListingHeroProps = {
 export function ListingHero({
   category,
   categories,
-  projects,
 }: ListingHeroProps) {
   const position = categories.findIndex((c) => c.slug === category.slug) + 1;
 

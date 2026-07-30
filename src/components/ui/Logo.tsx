@@ -1,11 +1,4 @@
-import { cn } from "@/lib/utils";
 import Image from "next/image";
-
-type LogoProps = {
-  /** Render in white for use on dark surfaces (e.g. the footer). */
-  inverted?: boolean;
-  className?: string;
-};
 
 /**
  * The Practice Architects brand mark — a monochrome diamond glyph paired
