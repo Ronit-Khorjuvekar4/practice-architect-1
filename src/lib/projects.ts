@@ -51,6 +51,23 @@ import {
 const PROJECTS_ENDPOINT = "/projects";
 const PROJECT_DETAIL_REVALIDATE_SECONDS = 60;
 
+/** Projects shown per page on category listings (Strapi server-side paging). */
+export const PROJECTS_PAGE_SIZE = 25;
+
+/** Strapi's `meta.pagination` block, surfaced to the listing UI. */
+export type ProjectsPagination = {
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+};
+
+/** One page of category projects plus the pagination meta driving the UI. */
+export type ProjectsPage = {
+  projects: Project[];
+  pagination: ProjectsPagination;
+};
+
 /**
  * Lean populate for listings. No `fields` filter on the project itself —
  * Strapi returns every scalar by default, so newly-added fields (location,
@@ -161,24 +178,39 @@ export async function getProjects(): Promise<Project[]> {
   }
 }
 
-/** Projects belonging to a category, by category slug. */
+/**
+ * One page of projects for a category (Strapi server-side pagination).
+ * `page` is 1-based; 25 projects per page. Returns the pagination meta from
+ * Strapi so the UI never hardcodes the total or page count.
+ */
 export async function getProjectsByCategory(
   categorySlug: string,
-): Promise<Project[]> {
+  page = 1,
+): Promise<ProjectsPage> {
+  const emptyPagination: ProjectsPagination = {
+    page,
+    pageSize: PROJECTS_PAGE_SIZE,
+    pageCount: 0,
+    total: 0,
+  };
   try {
     const res = await fetchStrapiData<StrapiCollectionResponse<StrapiProject>>(
       PROJECTS_ENDPOINT,
       {
         query: listingQuery({
           filters: { practice_category: { slug: { $eq: categorySlug } } },
+          pagination: { page, pageSize: PROJECTS_PAGE_SIZE },
         }),
         tags: ["projects", `category:${categorySlug}`],
       },
     );
-    return res.data.map(normalizeProject);
+    return {
+      projects: res.data.map(normalizeProject),
+      pagination: res.meta.pagination ?? emptyPagination,
+    };
   } catch (error) {
     logStrapiError(`getProjectsByCategory(${categorySlug})`, error);
-    return [];
+    return { projects: [], pagination: emptyPagination };
   }
 }
 

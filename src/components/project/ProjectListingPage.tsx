@@ -1,6 +1,8 @@
 import type { Category, Project } from "@/types/project";
+import type { ProjectsPagination } from "@/lib/projects";
 import { ListingHero } from "@/components/sections/ListingHero";
 import { ProjectGrid } from "@/components/project/ProjectGrid";
+import { ProjectPagination } from "@/components/project/ProjectPagination";
 import { ButtonLink } from "@/components/ui/button";
 
 type ProjectListingPageProps = {
@@ -8,12 +10,14 @@ type ProjectListingPageProps = {
   /** All categories — forwarded to the hero for discipline position. */
   categories: Category[];
   projects: Project[];
+  pagination: ProjectsPagination;
 };
 
 export function ProjectListingPage({
   category,
   categories,
   projects,
+  pagination,
 }: ProjectListingPageProps) {
   const hasProjects = projects.length > 0;
 
@@ -28,7 +32,13 @@ export function ProjectListingPage({
       <section className="border-b border-line-strong bg-panel">
         <div className="mx-auto max-w-[1360px] px-6 py-16 md:px-14 md:py-20">
           {hasProjects ? (
-            <ProjectGrid projects={projects} columns={3} />
+            <>
+              <ProjectGrid projects={projects} columns={3} />
+              <ProjectPagination
+                pagination={pagination}
+                basePath={`/${category.slug}`}
+              />
+            </>
           ) : (
             <div className="flex flex-col items-center justify-center border border-line bg-card px-6 py-24 text-center">
               <span className="font-mono text-[11px] uppercase tracking-[0.2em] text-micro">

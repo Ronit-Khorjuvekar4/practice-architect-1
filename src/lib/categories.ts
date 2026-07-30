@@ -79,7 +79,7 @@ const CATEGORY_QUERY = {
     },
   },
   sort: ["createdAt:asc"],
-  pagination: { pageSize: 50 },
+  pagination: { pageSize: 100 },
 } as const;
 
 function optionalDimension(value: number | null | undefined) {

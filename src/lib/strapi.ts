@@ -159,10 +159,7 @@ export async function fetchStrapiData<T>(
 
   const init: RequestInit = {
     headers: {
-      "Content-Type": "application/json",
-      ...(STRAPI_API_TOKEN
-        ? { Authorization: `Bearer ${STRAPI_API_TOKEN}` }
-        : {}),
+      "Content-Type": "application/json"
     },
     ...(noStore
       ? { cache: "no-store" }
