@@ -97,12 +97,12 @@ jobs:
           chmod 700 "$HOME/.ssh"
 
           printf '%s' "${{ secrets.VPS_SSH_PRIVATE_KEY }}" |
-            tr -d '\r' > "$HOME/.ssh/id_ed25519"
+            tr -d '\r' > "$HOME/.ssh/practice_architects_github_actions"
 
           printf '%s\n' "${{ secrets.VPS_KNOWN_HOSTS }}" |
             tr -d '\r' > "$HOME/.ssh/known_hosts"
 
-          chmod 600 "$HOME/.ssh/id_ed25519"
+          chmod 600 "$HOME/.ssh/practice_architects_github_actions"
           chmod 644 "$HOME/.ssh/known_hosts"
 
       - name: Transfer image to VPS
