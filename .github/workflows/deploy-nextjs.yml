@@ -1,0 +1,220 @@
+name: Deploy Next.js to Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: practice-architects-nextjs-production
+  cancel-in-progress: false
+
+env:
+  IMAGE_NAME: practice-architects-next:local
+  ARCHIVE_NAME: practice-architects-next-${{ github.sha }}.tar.gz
+  NEXT_PUBLIC_STRAPI_URL: https://cms.practicearchitects.in
+
+jobs:
+  build-and-deploy:
+    name: Build and deploy Next.js
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: false
+          load: true
+          tags: ${{ env.IMAGE_NAME }}
+          build-args: |
+            NEXT_PUBLIC_STRAPI_URL=${{ env.NEXT_PUBLIC_STRAPI_URL }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Smoke-test Docker image
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          cleanup() {
+            docker rm -f nextjs-smoke >/dev/null 2>&1 || true
+          }
+
+          trap cleanup EXIT
+
+          docker run \
+            --detach \
+            --name nextjs-smoke \
+            --publish 127.0.0.1:3000:3000 \
+            "$IMAGE_NAME"
+
+          for attempt in {1..30}; do
+            if curl \
+              --fail \
+              --silent \
+              --show-error \
+              http://127.0.0.1:3000/ \
+              >/dev/null; then
+              echo "Next.js smoke test passed."
+              exit 0
+            fi
+
+            sleep 2
+          done
+
+          echo "Next.js smoke test failed."
+          docker logs nextjs-smoke
+          exit 1
+
+      - name: Compress Docker image
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          docker save "$IMAGE_NAME" |
+            gzip -1 > "/tmp/$ARCHIVE_NAME"
+
+          ls -lh "/tmp/$ARCHIVE_NAME"
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          mkdir -p "$HOME/.ssh"
+          chmod 700 "$HOME/.ssh"
+
+          printf '%s' "${{ secrets.VPS_SSH_PRIVATE_KEY }}" |
+            tr -d '\r' > "$HOME/.ssh/id_ed25519"
+
+          printf '%s\n' "${{ secrets.VPS_KNOWN_HOSTS }}" |
+            tr -d '\r' > "$HOME/.ssh/known_hosts"
+
+          chmod 600 "$HOME/.ssh/id_ed25519"
+          chmod 644 "$HOME/.ssh/known_hosts"
+
+      - name: Transfer image to VPS
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          scp \
+            -P "${{ secrets.VPS_PORT }}" \
+            "/tmp/$ARCHIVE_NAME" \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/tmp/$ARCHIVE_NAME"
+
+      - name: Deploy image on VPS
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+
+          ssh \
+            -p "${{ secrets.VPS_PORT }}" \
+            "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
+            "ARCHIVE='/tmp/$ARCHIVE_NAME' IMAGE='$IMAGE_NAME' bash -s" <<'REMOTE'
+          set -Eeuo pipefail
+
+          COMPOSE_DIR="/srv/practice-architects/compose"
+          CONTAINER_NAME="practice-nextjs"
+          ROLLBACK_IMAGE="practice-architects-next:rollback"
+
+          cleanup() {
+            rm -f "$ARCHIVE"
+          }
+
+          trap cleanup EXIT
+
+          echo "Saving the currently deployed image for rollback..."
+
+          if docker image inspect "$IMAGE" >/dev/null 2>&1; then
+            docker tag "$IMAGE" "$ROLLBACK_IMAGE"
+          fi
+
+          echo "Loading the new Docker image..."
+
+          gunzip -c "$ARCHIVE" |
+            docker load
+
+          cd "$COMPOSE_DIR"
+
+          echo "Restarting only the Next.js service..."
+
+          docker compose up \
+            --detach \
+            --no-deps \
+            --force-recreate \
+            nextjs
+
+          echo "Waiting for the new container to become healthy..."
+
+          DEPLOYMENT_HEALTHY=false
+
+          for attempt in $(seq 1 45); do
+            STATUS="$(
+              docker inspect \
+                --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}starting{{end}}' \
+                "$CONTAINER_NAME" \
+                2>/dev/null || echo "missing"
+            )"
+
+            echo "Health status: $STATUS"
+
+            if [ "$STATUS" = "healthy" ]; then
+              DEPLOYMENT_HEALTHY=true
+              break
+            fi
+
+            if [ "$STATUS" = "unhealthy" ] || [ "$STATUS" = "missing" ]; then
+              break
+            fi
+
+            sleep 2
+          done
+
+          if [ "$DEPLOYMENT_HEALTHY" != "true" ]; then
+            echo "Deployment failed. Showing Next.js logs..."
+
+            docker compose logs \
+              --tail=100 \
+              nextjs || true
+
+            if docker image inspect "$ROLLBACK_IMAGE" >/dev/null 2>&1; then
+              echo "Rolling back to the previous image..."
+
+              docker tag "$ROLLBACK_IMAGE" "$IMAGE"
+
+              docker compose up \
+                --detach \
+                --no-deps \
+                --force-recreate \
+                nextjs
+            fi
+
+            exit 1
+          fi
+
+          echo "Deployment completed successfully."
+
+          docker compose ps nextjs
+
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            http://127.0.0.1:3000/ \
+            >/dev/null
+
+          docker image prune --force
+          REMOTE
