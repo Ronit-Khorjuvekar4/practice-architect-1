@@ -6,13 +6,15 @@
  * in `lib/projects.ts` and `lib/categories.ts` build on these primitives.
  */
 
-/** Strapi REST base, e.g. http://localhost:1337/api */
-export const STRAPI_API_URL =
-  process.env.NEXT_PUBLIC_STRAPI_API_URL ?? "http://localhost:1337/api";
+/** Strapi origin, without a trailing slash. */
+export const STRAPI_BASE_URL = (
+  process.env.NEXT_PUBLIC_STRAPI_URL ?? "http://localhost:1337"
+).replace(/\/+$/, "");
 
-/** Strapi origin — used to resolve relative `/uploads/*` media URLs. */
-export const STRAPI_BASE_URL =
-  process.env.NEXT_PUBLIC_STRAPI_URL ?? "http://localhost:1337";
+/** Strapi REST API base. */
+export const STRAPI_API_URL =
+  process.env.NEXT_PUBLIC_STRAPI_API_URL ??
+  `${STRAPI_BASE_URL}/api`;
 
 /** Optional read token for protected endpoints (server-only env var). */
 // const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
