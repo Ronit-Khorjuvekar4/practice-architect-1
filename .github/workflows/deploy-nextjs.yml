@@ -71,7 +71,7 @@ jobs:
               exit 0
             fi
 
-            echo "Waiting for Next.js container... attempt $attempt/30"
+            echo "Waiting for Next.js container: attempt $attempt/30"
             sleep 2
           done
 
@@ -131,7 +131,8 @@ jobs:
             -o IdentitiesOnly=yes \
             -o BatchMode=yes \
             -o StrictHostKeyChecking=yes \
-            -o ConnectTimeout=15 \
+            -o ConnectTimeout=20 \
+            -o ConnectionAttempts=3 \
             -p "${{ secrets.VPS_PORT }}" \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
             "hostname && whoami"
@@ -141,15 +142,20 @@ jobs:
         run: |
           set -Eeuo pipefail
 
+          echo "Transferring Docker image archive to VPS..."
+
           scp \
             -i "$HOME/.ssh/practice_architects_github_actions" \
             -o IdentitiesOnly=yes \
             -o BatchMode=yes \
             -o StrictHostKeyChecking=yes \
-            -o ConnectTimeout=15 \
+            -o ConnectTimeout=20 \
+            -o ConnectionAttempts=3 \
             -P "${{ secrets.VPS_PORT }}" \
             "/tmp/$ARCHIVE_NAME" \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/tmp/$ARCHIVE_NAME"
+
+          echo "Docker image archive transferred successfully."
 
       - name: Deploy image on VPS
         shell: bash
@@ -161,7 +167,8 @@ jobs:
             -o IdentitiesOnly=yes \
             -o BatchMode=yes \
             -o StrictHostKeyChecking=yes \
-            -o ConnectTimeout=15 \
+            -o ConnectTimeout=20 \
+            -o ConnectionAttempts=3 \
             -p "${{ secrets.VPS_PORT }}" \
             "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" \
             "ARCHIVE='/tmp/$ARCHIVE_NAME' IMAGE='$IMAGE_NAME' bash -s" <<'REMOTE'
@@ -196,7 +203,7 @@ jobs:
             | docker load
 
           if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
-            echo "The expected Docker image was not loaded: $IMAGE"
+            echo "Expected Docker image was not loaded: $IMAGE"
             exit 1
           fi
 
@@ -223,7 +230,7 @@ jobs:
                 || echo "missing"
             )"
 
-            echo "Attempt $attempt/45 — health status: $STATUS"
+            echo "Attempt $attempt/45 - status: $STATUS"
 
             if [ "$STATUS" = "healthy" ]; then
               DEPLOYMENT_HEALTHY=true
@@ -259,7 +266,9 @@ jobs:
                 --force-recreate \
                 nextjs
 
-              echo "Waiting for the rollback container..."
+              echo "Waiting for rollback container..."
+
+              ROLLBACK_HEALTHY=false
 
               for attempt in $(seq 1 30); do
                 ROLLBACK_STATUS="$(
@@ -270,15 +279,21 @@ jobs:
                     || echo "missing"
                 )"
 
-                echo "Rollback attempt $attempt/30 — status: $ROLLBACK_STATUS"
+                echo "Rollback attempt $attempt/30 - status: $ROLLBACK_STATUS"
 
                 if [ "$ROLLBACK_STATUS" = "healthy" ]; then
-                  echo "Rollback completed successfully."
+                  ROLLBACK_HEALTHY=true
                   break
                 fi
 
                 sleep 2
               done
+
+              if [ "$ROLLBACK_HEALTHY" = "true" ]; then
+                echo "Rollback completed successfully."
+              else
+                echo "Rollback container did not become healthy."
+              fi
             else
               echo "Rollback image is unavailable."
             fi
