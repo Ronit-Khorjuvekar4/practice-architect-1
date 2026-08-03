@@ -2,10 +2,12 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
+import type { Ref } from "react";
 import type { Competition, CompetitionImage } from "@/types/competition";
 
 type CompetitionStageProps = {
   competition: Competition;
+  stageRef?: Ref<HTMLElement>;
 };
 
 function StageImage({ image }: { image: CompetitionImage }) {
@@ -26,7 +28,10 @@ function StageImage({ image }: { image: CompetitionImage }) {
   );
 }
 
-export function CompetitionStage({ competition }: CompetitionStageProps) {
+export function CompetitionStage({
+  competition,
+  stageRef,
+}: CompetitionStageProps) {
   const [imageIndex, setImageIndex] = useState(0);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
   const safeIndex = Math.min(imageIndex, competition.images.length - 1);
@@ -47,6 +52,7 @@ export function CompetitionStage({ competition }: CompetitionStageProps) {
 
   return (
     <article
+      ref={stageRef}
       tabIndex={0}
       aria-label={`${competition.name} competition gallery`}
       onKeyDown={(event) => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { CompetitionIndex } from "@/components/competition/CompetitionIndex";
 import { CompetitionStage } from "@/components/competition/CompetitionStage";
 import type { Competition } from "@/types/competition";
@@ -13,9 +13,19 @@ export function CompetitionBrowser({
   competitions,
 }: CompetitionBrowserProps) {
   const [selectedId, setSelectedId] = useState(competitions[0].id);
+  const imageSectionRef = useRef<HTMLElement>(null);
 
   const handleSelect = useCallback((competition: Competition) => {
     setSelectedId(competition.id);
+
+    if (window.matchMedia("(max-width: 1023px)").matches) {
+      window.requestAnimationFrame(() => {
+        imageSectionRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+      });
+    }
   }, []);
 
   const selectedCompetition =
@@ -33,6 +43,7 @@ export function CompetitionBrowser({
       <CompetitionStage
         key={selectedCompetition.id}
         competition={selectedCompetition}
+        stageRef={imageSectionRef}
       />
     </div>
   );

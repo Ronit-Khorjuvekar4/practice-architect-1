@@ -173,7 +173,7 @@ export function CompetitionIndex({
         ref={viewportRef}
         onScroll={handleScroll}
         aria-label="All Competitions"
-        className="h-[320px] min-h-0 overflow-y-auto overscroll-contain lg:h-auto"
+        className="h-[320px] min-h-0 touch-pan-y touch-pinch-zoom overflow-y-auto lg:h-auto lg:overscroll-contain"
       >
         <ul className="relative" style={{ height: totalHeight }}>
           {visibleItems.map((competition, offset) => {
