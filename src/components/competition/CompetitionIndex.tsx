@@ -157,7 +157,7 @@ export function CompetitionIndex({
     },
     [items, onSelect, viewportHeight],
   );
-
+ 
   return (
     <div className="grid min-h-0 grid-rows-[auto_minmax(0,1fr)] border border-line-strong bg-panel">
       <div className="flex items-center justify-between border-b border-line-strong px-4 py-4 sm:px-5">
