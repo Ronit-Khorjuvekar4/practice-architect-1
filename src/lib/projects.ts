@@ -199,6 +199,7 @@ export async function getProjectsByCategory(
       {
         query: listingQuery({
           filters: { practice_category: { slug: { $eq: categorySlug } } },
+          sort: ["order:asc"],
           pagination: { page, pageSize: PROJECTS_PAGE_SIZE },
         }),
         tags: ["projects", `category:${categorySlug}`],
