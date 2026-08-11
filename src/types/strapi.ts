@@ -126,6 +126,17 @@ export interface StrapiProject {
   seo?: StrapiSeo | null;
 }
 
+/** An `other-project` collection entry (Strapi v5, flattened). */
+export interface StrapiOtherProject {
+  id: number;
+  documentId?: string;
+  name: string;
+  slug: string;
+  createdAt?: string;
+  /** Relation → practice-category (populated). */
+  practice_category?: StrapiCategory | null;
+}
+
 /** A `photo-gallery` collection entry (Strapi v5, flattened). */
 export interface StrapiPhotoGalleryEntry {
   id: number;

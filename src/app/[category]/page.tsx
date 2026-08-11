@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { getCategories, getCategoryBySlug, getCategorySlugs } from "@/lib/categories";
 import { getProjectsByCategory } from "@/lib/projects";
+import { getOtherProjectsByCategory } from "@/lib/other-projects";
 import { ProjectListingPage } from "@/components/project/ProjectListingPage";
 
 type CategoryPageProps = {
@@ -54,11 +55,13 @@ export default async function CategoryPage({
   const requestedPage = parsePageParam((await searchParams).page);
 
   // Fetched in parallel — none of these depend on each other.
-  const [categoryData, categories, projectsPage] = await Promise.all([
-    getCategoryBySlug(category),
-    getCategories(),
-    getProjectsByCategory(category, requestedPage),
-  ]);
+  const [categoryData, categories, projectsPage, otherProjects] =
+    await Promise.all([
+      getCategoryBySlug(category),
+      getCategories(),
+      getProjectsByCategory(category, requestedPage),
+      getOtherProjectsByCategory(category),
+    ]);
 
   if (!categoryData) {
     notFound();
@@ -76,6 +79,7 @@ export default async function CategoryPage({
       categories={categories}
       projects={projectsPage.projects}
       pagination={projectsPage.pagination}
+      otherProjects={otherProjects}
     />
   );
 }

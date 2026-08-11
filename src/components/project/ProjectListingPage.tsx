@@ -1,8 +1,10 @@
 import type { Category, Project } from "@/types/project";
 import type { ProjectsPagination } from "@/lib/projects";
+import type { OtherProject } from "@/types/other-project";
 import { ListingHero } from "@/components/sections/ListingHero";
 import { ProjectGrid } from "@/components/project/ProjectGrid";
 import { ProjectPagination } from "@/components/project/ProjectPagination";
+import { ProjectIndex } from "@/components/project/ProjectIndex";
 import { ButtonLink } from "@/components/ui/button";
 
 type ProjectListingPageProps = {
@@ -11,6 +13,7 @@ type ProjectListingPageProps = {
   categories: Category[];
   projects: Project[];
   pagination: ProjectsPagination;
+  otherProjects: OtherProject[];
 };
 
 export function ProjectListingPage({
@@ -18,8 +21,10 @@ export function ProjectListingPage({
   categories,
   projects,
   pagination,
+  otherProjects,
 }: ProjectListingPageProps) {
   const hasProjects = projects.length > 0;
+  const hasOtherProjects = otherProjects.length > 0;
 
   return (
     <>
@@ -30,7 +35,13 @@ export function ProjectListingPage({
       />
 
       <section className="border-b border-line-strong bg-panel">
-        <div className="mx-auto max-w-[1360px] px-6 py-16 md:px-14 md:py-20">
+        <div
+          className={`mx-auto max-w-[1360px] px-6 pt-16 md:px-14 md:pt-20 ${
+            hasOtherProjects
+              ? "pb-12 md:pb-14"
+              : "pb-16 md:pb-20"
+          }`}
+        >
           {hasProjects ? (
             <>
               <ProjectGrid projects={projects} columns={3} />
@@ -58,6 +69,8 @@ export function ProjectListingPage({
           )}
         </div>
       </section>
+
+      <ProjectIndex category={category} projects={otherProjects} />
     </>
   );
 }
